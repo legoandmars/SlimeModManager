@@ -48,7 +48,7 @@
             Margin="100,100,100,0"
             VerticalAlignment="Center"
             Source="{DynamicResource loadingInnerDrawingImage}"
-            Stretch="Uniform" />
+            Stretch="Uniform" Opacity="0" />
         <Image
             Grid.Row="0"
             Margin="100,100,100,0"

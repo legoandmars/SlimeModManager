@@ -95,13 +95,13 @@
             <StaticResource ResourceKey="Intro:ReviewsRustySpoon" />
             </TextBlock>
 
-            <TextBlock
+            <!-- <TextBlock
             Grid.Row="9"
             Margin="0,5"
             FontSize="16"
             TextWrapping="Wrap">
             <StaticResource ResourceKey="Intro:WikiGuide" />
-            </TextBlock>
+            </TextBlock> -->
 
             <StackPanel
             Grid.Row="10"

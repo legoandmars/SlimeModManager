@@ -23,7 +23,7 @@ namespace ModAssistant
 
         public class Constants
         {
-            public const string BeatSaberAPPID = "620980";
+            public const string NASBAppID = "1414850";
             public const string BeatModsAPIUrl = "https://beatmods.com/api/v1/";
             public const string TeknikAPIUrl = "https://api.teknik.io/v1/";
             public const string BeatModsURL = "https://beatmods.com";
@@ -32,6 +32,8 @@ namespace ModAssistant
             public const string WeebCDNAPIURL = "https://pat.assistant.moe/api/v1.0/";
             public const string BeatModsModsOptions = "mod?status=approved";
             public const string MD5Spacer = "                                 ";
+            public const string NASBModInfo = "https://raw.githubusercontent.com/DeadlyKitten/NASB-Mod-Info/master/API/modinfo.json";
+
             public static readonly char[] IllegalCharacters = new char[]
             {
                 '<', '>', ':', '/', '\\', '|', '?', '*', '"',
@@ -134,8 +136,8 @@ namespace ModAssistant
 
             if (!string.IsNullOrEmpty(InstallDir)
                 && Directory.Exists(InstallDir)
-                && Directory.Exists(Path.Combine(InstallDir, "Beat Saber_Data", "Plugins"))
-                && File.Exists(Path.Combine(InstallDir, "Beat Saber.exe")))
+                && Directory.Exists(Path.Combine(InstallDir, "Nickelodeon All-Star Brawl_Data", "Plugins"))
+                && File.Exists(Path.Combine(InstallDir, "Nickelodeon All-Star Brawl.exe")))
             {
                 return InstallDir;
             }
@@ -152,7 +154,7 @@ namespace ModAssistant
 
             try
             {
-                InstallDir = GetOculusDir();
+                //InstallDir = GetOculusDir();
             }
             catch { }
             if (!string.IsNullOrEmpty(InstallDir))
@@ -219,9 +221,9 @@ namespace ModAssistant
             regex = new Regex("\\s\"installdir\"\\s+\"(.+)\"");
             foreach (string path in SteamPaths)
             {
-                if (File.Exists(Path.Combine(@path, @"appmanifest_" + Constants.BeatSaberAPPID + ".acf")))
+                if (File.Exists(Path.Combine(@path, @"appmanifest_" + Constants.NASBAppID + ".acf")))
                 {
-                    using (StreamReader reader = new StreamReader(Path.Combine(@path, @"appmanifest_" + Constants.BeatSaberAPPID + ".acf")))
+                    using (StreamReader reader = new StreamReader(Path.Combine(@path, @"appmanifest_" + Constants.NASBAppID + ".acf")))
                     {
                         string line;
                         while ((line = reader.ReadLine()) != null)
@@ -229,7 +231,7 @@ namespace ModAssistant
                             Match match = regex.Match(line);
                             if (match.Success)
                             {
-                                if (File.Exists(Path.Combine(@path, @"common", match.Groups[1].Value, "Beat Saber.exe")))
+                                if (File.Exists(Path.Combine(@path, @"common", match.Groups[1].Value, "Nickelodeon All-Star Brawl.exe")))
                                 {
                                     return SetDir(Path.Combine(@path, @"common", match.Groups[1].Value), "Steam");
                                 }
@@ -243,7 +245,7 @@ namespace ModAssistant
 
         public static string GetVersion()
         {
-            string filename = Path.Combine(App.BeatSaberInstallDirectory, "Beat Saber_Data", "globalgamemanagers");
+            string filename = Path.Combine(App.BeatSaberInstallDirectory, "Nickelodeon All-Star Brawl_Data", "globalgamemanagers");
             using (var stream = File.OpenRead(filename))
             using (var reader = new BinaryReader(stream, Encoding.UTF8))
             {
@@ -348,11 +350,11 @@ namespace ModAssistant
                 path = path.Replace("\\select.this.directory", "");
                 path = path.Replace(".this.directory", "");
                 path = path.Replace("\\select.directory", "");
-                if (File.Exists(Path.Combine(path, "Beat Saber.exe")))
+                if (File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl.exe")))
                 {
                     string store;
-                    if (File.Exists(Path.Combine(path, "Beat Saber_Data", "Plugins", "steam_api64.dll"))
-                       || File.Exists(Path.Combine(path, "Beat Saber_Data", "Plugins", "x86_64", "steam_api64.dll")))
+                    if (File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl_Data", "Plugins", "steam_api64.dll"))
+                       || File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl_Data", "Plugins", "x86_64", "steam_api64.dll")))
                     {
                         store = "Steam";
                     }
@@ -385,7 +387,7 @@ namespace ModAssistant
         public static bool IsVoid()
         {
             string directory = App.BeatSaberInstallDirectory;
-            string pluginsDirectory = Path.Combine(directory, "Beat Saber_Data", "Plugins");
+            string pluginsDirectory = Path.Combine(directory, "Nickelodeon All-Star Brawl_Data", "Plugins");
 
             if (File.Exists(Path.Combine(directory, "IGG-GAMES.COM.url")) ||
                 File.Exists(Path.Combine(directory, "SmartSteamEmu.ini")) ||

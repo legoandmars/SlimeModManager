@@ -6,6 +6,20 @@ namespace ModAssistant
     public class Mod
     {
         public string name;
+        public string author;
+        public string description;
+        public string version;
+        public string git_path;
+        public string group;
+        public string download_url;
+        public string[] dependencies;
+        public Mods.ModListItem ListItem;
+        public List<Mod> Dependents = new List<Mod>();
+    }
+    /*
+    public class Mod
+    {
+        public string name;
         public string version;
         public string gameVersion;
         public string _id;
@@ -49,5 +63,5 @@ namespace ModAssistant
             public string _id;
             public Mod Mod;
         }
-    }
+    }*/
 }

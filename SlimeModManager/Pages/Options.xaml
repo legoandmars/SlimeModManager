@@ -48,7 +48,7 @@
             FontSize="24"
             FontWeight="Bold"
             Text="{DynamicResource Options:PageTitle}" />
-
+            <!--
             <TextBlock
             Grid.Row="0"
             Grid.Column="2"
@@ -65,7 +65,7 @@
             HorizontalAlignment="Stretch"
             VerticalContentAlignment="Center"
             SelectionChanged="LanguageSelectComboBox_SelectionChanged" />
-
+            -->
             <TextBlock
             Grid.Row="1"
             Margin="5"
@@ -123,7 +123,7 @@
             Checked="SaveSelected_Checked"
             IsChecked="{Binding SaveSelection, Mode=TwoWay}"
             Unchecked="SaveSelected_Unchecked" />
-
+            <!--
             <TextBlock
             Grid.Row="4"
             Margin="5"
@@ -174,8 +174,8 @@
             Checked="ReinstallInstalled_Checked"
             IsChecked="{Binding ReinstallInstalledMods, Mode=TwoWay}"
             Unchecked="ReinstallInstalled_Unchecked" />
-
-            <Menu
+            -->
+            <!-- <Menu
             Grid.Row="8"
             Grid.Column="0"
             Margin="5"
@@ -211,7 +211,7 @@
                     StaysOpenOnClick="True"
                     Checked="PlaylistsProtocolHandler_Checked"
                     IsChecked="{Binding PlaylistsProtocolHandlerEnabled}"
-                    Unchecked="PlaylistsProtocolHandler_Unchecked" />
+                    Unchecked="PlaylistsProtocolHandler_Unchecked" /> -->
                     <!-- <MenuItem
                     Padding="5,0"
                     Header="{DynamicResource Options:CloseWindow}"
@@ -222,9 +222,9 @@
                     IsChecked="{Binding CloseWindowOnFinish}"
                     Unchecked="CloseWindowOnFinish_Unchecked" />
                 -->
-                </MenuItem>
-            </Menu>
-
+            <!-- </MenuItem>
+            </Menu> -->
+            <!--
             <StackPanel
             Grid.Row="9"
             Grid.ColumnSpan="2"
@@ -247,9 +247,9 @@
                     <ComboBoxItem Tag="No" Content="{DynamicResource Options:OCIWindowNo}"/>
                 </ComboBox>
             </StackPanel>
-
-
-            <StackPanel
+            -->
+    
+            <!-- <StackPanel
             Grid.Row="12"
             Margin="5"
             HorizontalAlignment="Left"
@@ -262,7 +262,7 @@
                 Name="GameTypeTextBlock"
                 FontSize="16"
                 Text="{Binding InstallType}" />
-            </StackPanel>
+            </StackPanel> -->
 
             <StackPanel
             Grid.Row="13"
@@ -309,7 +309,7 @@
             Padding="5"
             Click="ApplicationThemeOpenThemesFolder_Click"
             Content="{DynamicResource Options:OpenFolderButton}" />
-
+            <!--
             <TextBlock
             Grid.Row="14"
             Margin="15,5,5,5"
@@ -330,7 +330,7 @@
                 Click="InstallPlaylistButton_Click"
                 Content="{DynamicResource Options:InstallPlaylist}" />
             </StackPanel>
-
+            -->
             <TextBlock
             Grid.Row="16"
             Margin="15,5,5,5"
@@ -350,6 +350,7 @@
                 Padding="5"
                 Click="OpenLogsDirButton_Click"
                 Content="{DynamicResource Options:OpenLogsButton}" />
+                <!--
                 <Button
                 x:Name="OpenAppData"
                 Height="30"
@@ -357,13 +358,15 @@
                 Padding="5"
                 Click="OpenAppDataButton_Click"
                 Content="{DynamicResource Options:OpenAppDataButton}" />
+                -->
+                <!--
                 <Button
                 x:Name="YeetBSIPA"
                 Height="30"
                 Margin="5"
                 Padding="5"
                 Click="YeetBSIPAButton_Click"
-                Content="{DynamicResource Options:UninstallBSIPAButton}" />
+                Content="{DynamicResource Options:UninstallBSIPAButton}" /> -->
                 <Button
                 Height="30"
                 Margin="5"

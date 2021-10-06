@@ -43,8 +43,8 @@ namespace ModAssistant.Pages
             }
             if (!CheckInstalledMods)
             {
-                SelectInstalled.IsEnabled = false;
-                ReinstallInstalled.IsEnabled = false;
+                //SelectInstalled.IsEnabled = false;
+                //ReinstallInstalled.IsEnabled = false;
             }
 
             UpdateHandlerStatus();
@@ -62,7 +62,7 @@ namespace ModAssistant.Pages
         {
             Utils.GetManualDir();
             DirectoryTextBlock.Text = InstallDirectory;
-            GameTypeTextBlock.Text = InstallType;
+            //GameTypeTextBlock.Text = InstallType;
         }
 
         private void OpenDirButton_Click(object sender, RoutedEventArgs e)
@@ -91,12 +91,12 @@ namespace ModAssistant.Pages
 
         private void CheckInstalled_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.CheckInstalled = true;
+            Properties.Settings.Default.CheckInstalled = false;
             App.CheckInstalledMods = true;
             CheckInstalledMods = true;
             Properties.Settings.Default.Save();
-            SelectInstalled.IsEnabled = true;
-            ReinstallInstalled.IsEnabled = true;
+            //SelectInstalled.IsEnabled = true;
+            //ReinstallInstalled.IsEnabled = true;
 
             if (MainWindow.ModsOpened)
             {
@@ -110,8 +110,8 @@ namespace ModAssistant.Pages
             App.CheckInstalledMods = false;
             CheckInstalledMods = false;
             Properties.Settings.Default.Save();
-            SelectInstalled.IsEnabled = false;
-            ReinstallInstalled.IsEnabled = false;
+            //SelectInstalled.IsEnabled = false;
+            //ReinstallInstalled.IsEnabled = false;
 
             if (MainWindow.ModsOpened)
             {
@@ -213,8 +213,9 @@ namespace ModAssistant.Pages
 
                 string title = (string)Application.Current.FindResource("Options:LogUploadFailed:Title");
                 string body = (string)Application.Current.FindResource("Options:LogUploadFailed:Body");
+                // fix some other stuff
                 MessageBox.Show($"{body}\n ================= \n" + exception, title);
-                Utils.OpenFolder(Path.Combine(InstallDirectory, "Logs"));
+                Utils.OpenFolder(Path.Combine(InstallDirectory, "BepInEx"));
             }
         }
 
@@ -224,13 +225,13 @@ namespace ModAssistant.Pages
             DateTime now = DateTime.Now;
             string logPath = Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath);
             string Log = Path.Combine(logPath, "log.log");
-            string GameLog = File.ReadAllText(Path.Combine(InstallDirectory, "Logs", "_latest.log"));
+            string GameLog = File.ReadAllText(Path.Combine(InstallDirectory, "BepInEx", "LogOutput.log"));
             string Separator = File.Exists(Log) ? $"\n\n=============================================\n============= Mod Assistant Log =============\n=============================================\n\n" : string.Empty;
             string ModAssistantLog = File.Exists(Log) ? File.ReadAllText(Log) : string.Empty;
 
             var nvc = new List<KeyValuePair<string, string>>()
             {
-                new KeyValuePair<string, string>("title", $"_latest.log ({now.ToString(DateFormat)})"),
+                new KeyValuePair<string, string>("title", $"LogOutput.log ({now.ToString(DateFormat)})"),
                 new KeyValuePair<string, string>("expireUnit", "hour"),
                 new KeyValuePair<string, string>("expireLength", "5"),
                 new KeyValuePair<string, string>("code", $"{GameLog}{Separator}{ModAssistantLog}"),
@@ -306,12 +307,10 @@ namespace ModAssistant.Pages
                 {
                     Mods.Instance.UninstallMod(mod);
                 }
-                if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "Plugins")))
-                    Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "Plugins"), true);
-                if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "Libs")))
-                    Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "Libs"), true);
-                if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "IPA")))
-                    Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "IPA"), true);
+                if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "plugins")))
+                    Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "plugins"), true);
+                if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "core")))
+                    Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "core"), true);
 
                 MainWindow.Instance.MainText = $"{Application.Current.FindResource("Options:AllModsUninstalled")}...";
             }
@@ -399,7 +398,7 @@ namespace ModAssistant.Pages
 
         public void UpdateOCIWindow(string state)
         {
-            ComboBox comboBox = ShowOCIWindowComboBox;
+            /*ComboBox comboBox = ShowOCIWindowComboBox;
             if (comboBox != null)
             {
                 if (state == "Yes") comboBox.SelectedIndex = 0;
@@ -411,7 +410,7 @@ namespace ModAssistant.Pages
             {
                 OCIWindow = App.OCIWindow = Properties.Settings.Default.OCIWindow = state;
                 Properties.Settings.Default.Save();
-            }
+            }*/
         }
     }
 }

@@ -89,7 +89,9 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-
+                            
+                            <GridViewColumn DisplayMemberBinding="{Binding ModAuthor}" Header="{DynamicResource Mods:Header:Author}" />
+                            
                             <GridViewColumn DisplayMemberBinding="{Binding ModVersion}" Header="{DynamicResource Mods:Header:Latest}" />
                             <GridViewColumn x:Name="DescriptionColumn" Header="{DynamicResource Mods:Header:Description}">
                                 <GridViewColumn.CellTemplate>

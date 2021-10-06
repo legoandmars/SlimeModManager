@@ -24,7 +24,8 @@ namespace ModAssistant.Pages
     {
         public static Mods Instance = new Mods();
 
-        public List<string> DefaultMods = new List<string>() { "SongCore", "ScoreSaber", "BeatSaverDownloader", "BeatSaverVoting", "PlaylistManager", "ModelDownloader" };
+        //public List<string> DefaultMods = new List<string>() { "SongCore", "ScoreSaber", "BeatSaverDownloader", "BeatSaverVoting", "PlaylistManager", "ModelDownloader" };
+        public List<string> DefaultMods = new List<string>() { "BepInEx" };
         public Mod[] ModsList;
         public Mod[] AllModsList;
         public static List<Mod> InstalledMods = new List<Mod>();
@@ -109,6 +110,7 @@ namespace ModAssistant.Pages
 
                 ModsListView.Visibility = Visibility.Hidden;
 
+                /*
                 if (App.CheckInstalledMods)
                 {
                     MainWindow.Instance.MainText = $"{FindResource("Mods:CheckingInstalledMods")}...";
@@ -123,6 +125,9 @@ namespace ModAssistant.Pages
                     UninstallColumn.Width = 0;
                     DescriptionColumn.Width = 800;
                 }
+                */
+
+                InstalledColumn.Width = 0;
 
                 MainWindow.Instance.MainText = $"{FindResource("Mods:LoadingMods")}...";
                 await Task.Run(async () => await PopulateModsList());
@@ -153,7 +158,7 @@ namespace ModAssistant.Pages
         {
             await GetAllMods();
 
-            GetBSIPAVersion();
+            //GetBSIPAVersion();
             CheckInstallDir("IPA/Pending/Plugins");
             CheckInstallDir("IPA/Pending/Libs");
             CheckInstallDir("Plugins");
@@ -209,7 +214,7 @@ namespace ModAssistant.Pages
             if (!File.Exists(InjectorPath)) return;
 
             string InjectorHash = Utils.CalculateMD5(InjectorPath);
-            foreach (Mod mod in AllModsList)
+            /*foreach (Mod mod in AllModsList)
             {
                 if (mod.name.ToLowerInvariant() == "bsipa")
                 {
@@ -224,7 +229,7 @@ namespace ModAssistant.Pages
                         }
                     }
                 }
-            }
+            }*/
         }
 
         private void AddDetectedMod(Mod mod)
@@ -241,7 +246,7 @@ namespace ModAssistant.Pages
 
         private Mod GetModFromHash(string hash)
         {
-            foreach (Mod mod in AllModsList)
+            /*foreach (Mod mod in AllModsList)
             {
                 if (mod.name.ToLowerInvariant() != "bsipa" && mod.status != "declined")
                 {
@@ -254,7 +259,7 @@ namespace ModAssistant.Pages
                         }
                     }
                 }
-            }
+            }*/
 
             return null;
         }
@@ -263,7 +268,8 @@ namespace ModAssistant.Pages
         {
             try
             {
-                var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAPIUrl + Utils.Constants.BeatModsModsOptions + "&gameVersion=" + MainWindow.GameVersion);
+                //var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAPIUrl + Utils.Constants.BeatModsModsOptions + "&gameVersion=" + MainWindow.GameVersion);
+                var resp = await HttpClient.GetAsync(Utils.Constants.NASBModInfo);
                 var body = await resp.Content.ReadAsStringAsync();
                 ModsList = JsonSerializer.Deserialize<Mod[]>(body);
             }
@@ -275,7 +281,8 @@ namespace ModAssistant.Pages
 
             foreach (Mod mod in ModsList)
             {
-                bool preSelected = mod.required;
+                //bool preSelected = mod.required;
+                bool preSelected = false;
                 if (DefaultMods.Contains(mod.name) || (App.SaveModSelection && App.SavedMods.Contains(mod.name)))
                 {
                     preSelected = true;
@@ -290,12 +297,13 @@ namespace ModAssistant.Pages
                 ModListItem ListItem = new ModListItem()
                 {
                     IsSelected = preSelected,
-                    IsEnabled = !mod.required,
+                    IsEnabled = !preSelected,
                     ModName = mod.name,
+                    ModAuthor = mod.author,
                     ModVersion = mod.version,
-                    ModDescription = mod.description.Replace("\r\n", " ").Replace("\n", " "),
+                    ModDescription = mod.description,
                     ModInfo = mod,
-                    Category = mod.category
+                    Category = mod.group
                 };
 
                 foreach (Promotion promo in Promotions.List)
@@ -368,12 +376,12 @@ namespace ModAssistant.Pages
                         );
                     }
 
-                    Options.Instance.YeetBSIPA.IsEnabled = true;
+                    //Options.Instance.YeetBSIPA.IsEnabled = true;
                 }
                 else if (mod.ListItem.IsSelected)
                 {
                     MainWindow.Instance.MainText = $"{string.Format((string)FindResource("Mods:InstallingMod"), mod.name)}...";
-                    await Task.Run(async () => await InstallMod(mod, Path.Combine(installDirectory, @"IPA\Pending")));
+                    await Task.Run(async () => await InstallMod(mod, Path.Combine(installDirectory)));
                     MainWindow.Instance.MainText = $"{string.Format((string)FindResource("Mods:InstalledMod"), mod.name)}.";
                 }
             }
@@ -385,10 +393,10 @@ namespace ModAssistant.Pages
 
         private async Task InstallMod(Mod mod, string directory)
         {
-            int filesCount = 0;
+            //int filesCount = 0;
             string downloadLink = null;
 
-            foreach (Mod.DownloadLink link in mod.downloads)
+            /*foreach (Mod.DownloadLink link in mod.downloads)
             {
                 filesCount = link.hashMd5.Length;
 
@@ -402,7 +410,9 @@ namespace ModAssistant.Pages
                     downloadLink = link.url;
                     break;
                 }
-            }
+            }*/
+
+            downloadLink = mod.download_url;
 
             if (string.IsNullOrEmpty(downloadLink))
             {
@@ -412,9 +422,9 @@ namespace ModAssistant.Pages
 
             while (true)
             {
-                List<ZipArchiveEntry> files = new List<ZipArchiveEntry>(filesCount);
+                List<ZipArchiveEntry> files = new List<ZipArchiveEntry>();
 
-                using (Stream stream = await DownloadMod(Utils.Constants.BeatModsURL + downloadLink))
+                using (Stream stream = await DownloadMod(downloadLink))
                 using (ZipArchive archive = new ZipArchive(stream))
                 {
                     foreach (ZipArchiveEntry file in archive.Entries)
@@ -427,32 +437,26 @@ namespace ModAssistant.Pages
 
                         if (!string.IsNullOrEmpty(file.Name))
                         {
-                            foreach (Mod.DownloadLink download in mod.downloads)
+                            using (Stream fileStream = file.Open())
                             {
-                                foreach (Mod.FileHashes fileHash in download.hashMd5)
-                                {
-                                    using (Stream fileStream = file.Open())
-                                    {
-                                        if (fileHash.hash == Utils.CalculateMD5FromStream(fileStream))
-                                        {
-                                            files.Add(file);
-                                            break;
-                                        }
-                                    }
-                                }
+                                /*if (fileHash.hash == Utils.CalculateMD5FromStream(fileStream))
+                                {*/
+                                    files.Add(file);
+                                   /* break;
+                                }*/
                             }
                         }
                     }
 
-                    if (files.Count == filesCount)
-                    {
+                    //if (files.Count == filesCount)
+                    //{
                         foreach (ZipArchiveEntry file in files)
                         {
                             await ExtractFile(file, Path.Combine(directory, file.FullName), 3.0, mod.name, 10);
                         }
 
                         break;
-                    }
+                    //}
                 }
             }
 
@@ -493,19 +497,18 @@ namespace ModAssistant.Pages
 
         private void RegisterDependencies(Mod dependent)
         {
-            if (dependent.dependencies.Length == 0)
+            if (dependent.dependencies == null || dependent.dependencies.Length == 0)
                 return;
 
             foreach (Mod mod in ModsList)
             {
-                foreach (Mod.Dependency dep in dependent.dependencies)
+                foreach (string dep in dependent.dependencies)
                 {
 
-                    if (dep.name == mod.name)
+                    if (dep == mod.name)
                     {
-                        dep.Mod = mod;
+                        //dep.Mod = mod;
                         mod.Dependents.Add(dependent);
-
                     }
                 }
             }
@@ -513,16 +516,19 @@ namespace ModAssistant.Pages
 
         private void ResolveDependencies(Mod dependent)
         {
-            if (dependent.ListItem.IsSelected && dependent.dependencies.Length > 0)
+            if (dependent.ListItem.IsSelected && dependent.dependencies != null && dependent.dependencies.Length > 0)
             {
-                foreach (Mod.Dependency dependency in dependent.dependencies)
+                foreach (string dependency in dependent.dependencies)
                 {
-                    if (dependency.Mod.ListItem.IsEnabled)
+                    foreach (Mod mod in ModsList)
                     {
-                        dependency.Mod.ListItem.PreviousState = dependency.Mod.ListItem.IsSelected;
-                        dependency.Mod.ListItem.IsSelected = true;
-                        dependency.Mod.ListItem.IsEnabled = false;
-                        ResolveDependencies(dependency.Mod);
+                        if (dependency == mod.name && mod.ListItem.IsEnabled)
+                        {
+                            mod.ListItem.PreviousState = mod.ListItem.IsSelected;
+                            mod.ListItem.IsSelected = true;
+                            mod.ListItem.IsEnabled = false;
+                            ResolveDependencies(mod);
+                        }
                     }
                 }
             }
@@ -530,26 +536,34 @@ namespace ModAssistant.Pages
 
         private void UnresolveDependencies(Mod dependent)
         {
-            if (!dependent.ListItem.IsSelected && dependent.dependencies.Length > 0)
+            if (!dependent.ListItem.IsSelected && dependent.dependencies != null && dependent.dependencies.Length > 0)
             {
-                foreach (Mod.Dependency dependency in dependent.dependencies)
+                foreach (string dependency in dependent.dependencies)
                 {
-                    if (!dependency.Mod.ListItem.IsEnabled)
+                    foreach (Mod mod in ModsList)
                     {
-                        bool needed = false;
-                        foreach (Mod dep in dependency.Mod.Dependents)
+                        if (dependency == mod.name && !mod.ListItem.IsEnabled)
                         {
-                            if (dep.ListItem.IsSelected)
+                            /*mod.ListItem.PreviousState = mod.ListItem.IsSelected;
+                            mod.ListItem.IsSelected = true;
+                            mod.ListItem.IsEnabled = false;
+                            ResolveDependencies(mod);*/
+                            bool needed = false;
+                            foreach (Mod dep in mod.Dependents)
                             {
-                                needed = true;
-                                break;
+                                if (dep.ListItem.IsSelected)
+                                {
+                                    needed = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (!needed && !dependency.Mod.required)
-                        {
-                            dependency.Mod.ListItem.IsSelected = dependency.Mod.ListItem.PreviousState;
-                            dependency.Mod.ListItem.IsEnabled = true;
-                            UnresolveDependencies(dependency.Mod);
+                            //if (!needed && !mod.required)
+                            if (!needed)
+                            {
+                                mod.ListItem.IsSelected = mod.ListItem.PreviousState;
+                                mod.ListItem.IsEnabled = true;
+                                UnresolveDependencies(mod);
+                            }
                         }
                     }
                 }
@@ -589,6 +603,7 @@ namespace ModAssistant.Pages
         public class ModListItem
         {
             public string ModName { get; set; }
+            public string ModAuthor { get; set; }
             public string ModVersion { get; set; }
             public string ModDescription { get; set; }
             public bool PreviousState { get; set; }
@@ -653,7 +668,8 @@ namespace ModAssistant.Pages
             {
                 get
                 {
-                    return (!ModInfo.required && IsInstalled);
+                    //return (!ModInfo.required && IsInstalled);
+                    return (IsInstalled);
                 }
             }
 
@@ -661,7 +677,8 @@ namespace ModAssistant.Pages
             {
                 get
                 {
-                    if (!ModInfo.required && IsInstalled)
+                    //if (!ModInfo.required && IsInstalled)
+                    if (IsInstalled)
                         return "Visible";
                     else
                         return "Hidden";
@@ -693,7 +710,7 @@ namespace ModAssistant.Pages
             }
         }
 
-        public void UninstallBSIPA(Mod.DownloadLink links)
+        /*public void UninstallBSIPA(Mod.DownloadLink links)
         {
             Process.Start(new ProcessStartInfo
             {
@@ -709,7 +726,7 @@ namespace ModAssistant.Pages
                     File.Delete(Path.Combine(App.BeatSaberInstallDirectory, file));
             }
             Options.Instance.YeetBSIPA.IsEnabled = false;
-        }
+        }*/
 
         private void Uninstall_Click(object sender, RoutedEventArgs e)
         {
@@ -745,7 +762,7 @@ namespace ModAssistant.Pages
 
         public void UninstallMod(Mod mod)
         {
-            Mod.DownloadLink links = null;
+            /*Mod.DownloadLink links = null;
             foreach (Mod.DownloadLink link in mod.downloads)
             {
                 if (link.type.ToLowerInvariant() == "universal" || link.type.ToLowerInvariant() == App.BeatSaberInstallType.ToLowerInvariant())
@@ -777,7 +794,7 @@ namespace ModAssistant.Pages
                     File.Delete(Path.Combine(App.BeatSaberInstallDirectory, files.file));
                 if (File.Exists(Path.Combine(App.BeatSaberInstallDirectory, "IPA", "Pending", files.file)))
                     File.Delete(Path.Combine(App.BeatSaberInstallDirectory, "IPA", "Pending", files.file));
-            }
+            }*/
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

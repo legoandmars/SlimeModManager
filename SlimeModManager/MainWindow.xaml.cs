@@ -280,7 +280,8 @@ namespace ModAssistant
                 return;
             }
             Mods.ModListItem mod = ((Mods.ModListItem)Mods.Instance.ModsListView.SelectedItem);
-            string infoUrl = mod.ModInfo.link;
+            //string infoUrl = mod.ModInfo.link;
+            string infoUrl = "";
             if (string.IsNullOrEmpty(infoUrl))
             {
                 MessageBox.Show(string.Format((string)Application.Current.FindResource("MainWindow:NoModInfoPage"), mod.ModName));

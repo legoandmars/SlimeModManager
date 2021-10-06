@@ -38,11 +38,11 @@ namespace ModAssistant
 
         public static void UpdateUI(string languageCode)
         {
-            if (Options.Instance != null && Options.Instance.LanguageSelectComboBox != null)
+            /*if (Options.Instance != null && Options.Instance.LanguageSelectComboBox != null)
             {
                 Options.Instance.LanguageSelectComboBox.ItemsSource = availableCultures.Select(cultureInfo => cultureInfo.NativeName).ToList();
                 Options.Instance.LanguageSelectComboBox.SelectedIndex = LoadedLanguages.FindIndex(cultureInfo => cultureInfo.Name.Equals(languageCode));
-            }
+            }*/
         }
 
         public static ResourceDictionary LanguagesDict

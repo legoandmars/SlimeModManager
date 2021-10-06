@@ -9,13 +9,13 @@ namespace ModAssistant
 {
     class Updater
     {
-        private static readonly string APILatestURL = "https://api.github.com/repos/Assistant/ModAssistant/releases/latest";
+        private static readonly string APILatestURL = "https://api.github.com/repos/legoandmars/SlimeModManager/releases/latest";
 
         private static Update LatestUpdate;
         private static Version CurrentVersion;
         private static Version LatestVersion;
         private static bool NeedsUpdate = false;
-        private static readonly string NewExe = Path.Combine(Path.GetDirectoryName(Utils.ExePath), "ModAssistant.exe");
+        private static readonly string NewExe = Path.Combine(Path.GetDirectoryName(Utils.ExePath), "SlimeModManager.exe");
         private static readonly string Arguments = App.Arguments;
 
 #pragma warning disable CS0162 // Unreachable code detected
@@ -38,7 +38,7 @@ namespace ModAssistant
 
         public static async Task Run()
         {
-            if (Path.GetFileName(Utils.ExePath).Equals("ModAssistant.old.exe")) RunNew();
+            if (Path.GetFileName(Utils.ExePath).Equals("SlimeModManager.old.exe")) RunNew();
             try
             {
                 NeedsUpdate = await CheckForUpdate();
@@ -53,7 +53,7 @@ namespace ModAssistant
 
         public static async Task StartUpdate()
         {
-            string OldExe = Path.Combine(Path.GetDirectoryName(Utils.ExePath), "ModAssistant.old.exe");
+            string OldExe = Path.Combine(Path.GetDirectoryName(Utils.ExePath), "SlimeModManager.old.exe");
             string DownloadLink = null;
 
             foreach (Update.Asset asset in LatestUpdate.assets)

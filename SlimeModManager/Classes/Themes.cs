@@ -119,11 +119,13 @@ namespace ModAssistant
             {
                 try
                 {
-                    ApplyWindowsTheme();
+                    //ApplyWindowsTheme();
+                    ApplyTheme("Dark", false);
                 }
                 catch
                 {
-                    ApplyTheme("Light", false);
+                    //ApplyTheme("Light", false);
+                    ApplyTheme("Dark", false);
                 }
                 return;
             }

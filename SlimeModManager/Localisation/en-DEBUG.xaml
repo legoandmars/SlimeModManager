@@ -54,6 +54,7 @@
     <sys:String x:Key="Mods:Title">Mods:Title</sys:String>
     <sys:String x:Key="Mods:Header:Name">Mods:Header:Name</sys:String>
     <sys:String x:Key="Mods:Header:Installed">Mods:Header:Installed</sys:String>
+    <sys:String x:Key="Mods:Header:Author">Mods:Header:Author</sys:String>
     <sys:String x:Key="Mods:Header:Latest">Mods:Header:Latest</sys:String>
     <sys:String x:Key="Mods:Header:Description">Mods:Header:Description</sys:String>
     <sys:String x:Key="Mods:Header:Uninstall">Mods:Header:Uninstall</sys:String>
