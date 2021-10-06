@@ -1,7 +1,7 @@
-[![Mod Assistant](https://cdn.assistant.moe/images/ModAssistant/Icons/Banner.svg?v=5)](https://github.com/Assistant/ModAssistant/releases/latest)
-[![Download here!](https://cdn.assistant.moe/images/ModAssistant/Icons/Download.svg)](https://github.com/Assistant/ModAssistant/releases/latest)
+[![Slime Mod Manager](https://user-images.githubusercontent.com/34404266/136299010-e1593c19-5f81-4fde-9eab-74aaf08ef41a.png)](https://github.com/legoandmars/SlimeModManager/releases/latest)
+[![Download here!](https://cdn.assistant.moe/images/ModAssistant/Icons/Download.svg)](https://github.com/legoandmars/SlimeModManager/releases/latest)
 
-Mod Assistant is a PC mod installer for Beat Saber. It uses mods from [BeatMods](https://beatmods.com/).
+Slime Mod Manager is a PC mod installer for Nickelodeon All-Star Brawl. It's based on [Mod Assistant](https://github.com/Assistant/ModAssistant), a similar installer for Beat Saber.
 
 * [Features](#Features)
 * [Usage](#Usage)
@@ -16,21 +16,18 @@ Mod Assistant is a PC mod installer for Beat Saber. It uses mods from [BeatMods]
 
 ## Features
 
-Mod Assistant boasts a rich feature set, some of which include:
+Slime Mod Manager boasts a rich feature set, some of which include:
 * Dependency resolution
-* Installed mod detection
 * Mod uninstallation
-* OneClick&trade; Install support
 * Complex theming engine
-* Localization support
 * Headpats and Hugs
 
 ## Usage
 Download the newest installer from the release section and run it. This application auto-updates when launched, there is no need to download a new release each time.
 
-1. **Run the game at least once before trying to mod the game!** This applies to reinstalling your game too. All mods are moved into an `Old X.X.X Plugins` folder on first launch to avoid version mismatches, so make sure to do this before installing mods on a fresh version.
+1. **Run the game at least once before trying to mod the game!** This applies to reinstalling your game too.
 2. Once that's done, simply check off the mods that you wish to install and click the <kbd>Install or Update</kbd> button. Likewise, click the <kbd>Uninstall</kbd> button to remove any mods.
-3. Mods are installed to `IPA/Pending` until the game is run. Boot the game to complete mod installation.
+3. Mods are installed into `BepInEx/plugins`. Boot the game to complete mod installation.
 
 
 ## Themes
@@ -131,11 +128,11 @@ Examples:
   Make sure you're looking in the right place. Sometimes mod menus move as  modding libraries/practices change.
   
 **I don't see a certain mod in the mods list!**
-  Mod Assistant uses mods from [BeatMods](https://beatmods.com/) and shows whatever is available for download. If you need to install a mod manually, please refer to the [Beat Saber Modding Group Wiki](https://bsmg.wiki/pc-modding.html#manual-installation).
+  Slime Mod Manager uses mods from an online file and shows whatever is available for download. 
   
-**I hit install but now my game won't launch, I can't click any buttons, I only see a black screen, etc**
-  Please visit the [Beat Saber Modding Group](https://discord.gg/beatsabermods) `#pc-help` channels. Check the pinned messages or ask for help and see if you can work things out.
   
 ## Credits
 semver by Max Hauser
 https://github.com/maxhauser/semver
+Mod Assistant by Assistant
+https://github.com/Assistant/ModAssistant
