@@ -28,8 +28,14 @@ namespace ModAssistant
             var resp = await HttpClient.GetAsync(APILatestURL);
             var body = await resp.Content.ReadAsStringAsync();
             LatestUpdate = JsonSerializer.Deserialize<Update>(body);
-
-            LatestVersion = new Version(LatestUpdate.tag_name.Substring(1));
+            try
+            {
+                LatestVersion = new Version(LatestUpdate.tag_name.Substring(1));
+            }
+            catch
+            {
+                LatestVersion = new Version(LatestUpdate.tag_name);
+            }
             CurrentVersion = new Version(App.Version);
 
             return (LatestVersion > CurrentVersion);
@@ -43,7 +49,7 @@ namespace ModAssistant
             {
                 NeedsUpdate = await CheckForUpdate();
             }
-            catch
+            catch(Exception e)
             {
                 Utils.SendNotify((string)Application.Current.FindResource("Updater:CheckFailed"));
             }
