@@ -350,15 +350,23 @@
                 Padding="5"
                 Click="OpenLogsDirButton_Click"
                 Content="{DynamicResource Options:OpenLogsButton}" />
-                <!--
+
                 <Button
-                x:Name="OpenAppData"
+                x:Name="OpenGameFolder"
                 Height="30"
                 Margin="5"
                 Padding="5"
-                Click="OpenAppDataButton_Click"
-                Content="{DynamicResource Options:OpenAppDataButton}" />
-                -->
+                Click="OpenGameFolderButton_Click"
+                Content="{DynamicResource Options:OpenGameFolderButton}" />
+
+                <Button
+                x:Name="OpenPlugins"
+                Height="30"
+                Margin="5"
+                Padding="5"
+                Click="OpenPluginsButton_Click"
+                Content="{DynamicResource Options:OpenPluginsButton}" />
+
                 <!--
                 <Button
                 x:Name="YeetBSIPA"

@@ -268,6 +268,32 @@ namespace ModAssistant.Pages
             }
         }
 
+        private void OpenPluginsButton_Click(object sender, RoutedEventArgs e)
+        {
+            string location = Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "plugins");
+            if (Directory.Exists(location))
+            {
+                Utils.OpenFolder(location);
+            }
+            else
+            {
+                MessageBox.Show((string)Application.Current.FindResource("Options:PluginsNotFound"));
+            }
+        }
+
+        private void OpenGameFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            string location = App.BeatSaberInstallDirectory;
+            if (Directory.Exists(location))
+            {
+                Utils.OpenFolder(location);
+            }
+            else
+            {
+                MessageBox.Show((string)Application.Current.FindResource("Options:PluginsNotFound"));
+            }
+        }
+
         private async void YeetBSIPAButton_Click(object sender, RoutedEventArgs e)
         {
             if (Mods.Instance.AllModsList == null)
@@ -298,7 +324,7 @@ namespace ModAssistant.Pages
             if (resp == System.Windows.Forms.DialogResult.Yes)
             {
 
-                if (Mods.Instance.AllModsList == null)
+                /*if (Mods.Instance.AllModsList == null)
                 {
                     MainWindow.Instance.MainText = $"{Application.Current.FindResource("Options:GettingModList")}...";
                     await Task.Run(async () => await Mods.Instance.CheckInstalledMods());
@@ -306,7 +332,7 @@ namespace ModAssistant.Pages
                 foreach (Mod mod in Mods.InstalledMods)
                 {
                     Mods.Instance.UninstallMod(mod);
-                }
+                }*/
                 if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "plugins")))
                     Directory.Delete(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "plugins"), true);
                 if (Directory.Exists(Path.Combine(App.BeatSaberInstallDirectory, "BepInEx", "core")))

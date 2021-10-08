@@ -13,6 +13,7 @@ namespace ModAssistant
         public string group;
         public string download_url;
         public string[] dependencies;
+        public List<string> downloadedFilePaths = new List<string>();
         public Mods.ModListItem ListItem;
         public List<Mod> Dependents = new List<Mod>();
     }

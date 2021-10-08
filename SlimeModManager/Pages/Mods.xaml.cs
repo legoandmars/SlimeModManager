@@ -452,7 +452,9 @@ namespace ModAssistant.Pages
                     //{
                         foreach (ZipArchiveEntry file in files)
                         {
-                            await ExtractFile(file, Path.Combine(directory, file.FullName), 3.0, mod.name, 10);
+                            string fileInstallPath = Path.Combine(directory, file.FullName);
+                            await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
+                            if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
                         }
 
                         break;
@@ -762,6 +764,13 @@ namespace ModAssistant.Pages
 
         public void UninstallMod(Mod mod)
         {
+            if(mod.downloadedFilePaths != null && mod.downloadedFilePaths.Count > 0)
+            {
+                foreach(string filepath in mod.downloadedFilePaths)
+                {
+                    if (File.Exists(filepath)) File.Delete(filepath);
+                }
+            }
             /*Mod.DownloadLink links = null;
             foreach (Mod.DownloadLink link in mod.downloads)
             {
