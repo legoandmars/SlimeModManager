@@ -129,8 +129,10 @@ namespace ModAssistant.API
                 {
                     await DownloadMod(modToGet, modHandler);
                 }
+                    
+                App.CloseWindowOnFinish = true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 SetMessage(e.ToString());
                 SetMessage((string)Application.Current.FindResource("OneClick:AssetInstallFailed"));
