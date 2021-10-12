@@ -578,7 +578,6 @@ namespace ModAssistant.Pages
                 {
                     if (dep == mod.DependencyString)
                     {
-                        Console.WriteLine("Dependent");
                         //dep.Mod = mod;
                         mod.Dependents.Add(dependent);
                     }
