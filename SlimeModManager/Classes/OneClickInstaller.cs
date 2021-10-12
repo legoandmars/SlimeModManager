@@ -8,7 +8,7 @@ namespace ModAssistant
 {
     class OneClickInstaller
     {
-        private static readonly string[] Protocols = new[] { "modelsaber", "beatsaver", "bsplaylist" };
+        private static readonly string[] Protocols = new[] { "modelsaber", "beatsaver", "bsplaylist", "ror2mm" };
         public static OneClickStatus Status = new OneClickStatus();
 
         public static async Task InstallAsset(string link)
@@ -26,6 +26,9 @@ namespace ModAssistant
                     break;
                 case "bsplaylist":
                     await Playlist(uri);
+                    break;
+                case "ror2mm":
+                    await Thunderstore(uri);
                     break;
             }
             if (App.OCIWindow != "No")
@@ -56,6 +59,12 @@ namespace ModAssistant
         {
             if (App.OCIWindow != "No") Status.Show();
             await API.Playlists.DownloadAll(uri);
+        }
+
+        private static async Task Thunderstore(Uri uri)
+        {
+            if (App.OCIWindow != "No") Status.Show();
+            await API.Utils.DownloadModWithDependencies(uri);
         }
 
         public static void Register(string Protocol, bool Background = false, string Description = null)

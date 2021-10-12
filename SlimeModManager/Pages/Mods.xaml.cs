@@ -279,23 +279,46 @@ namespace ModAssistant.Pages
                 // actual pinning system tbd lmao
                 var modsList = new List<Mod>();
                 var voiceList = new List<Mod>();
+                var pinnedMod = new List<Mod>();
                 var pinnedVoice = new List<Mod>();
 
-                for(int i = 0; i < ModsList.Length; i++)
+                string[] pinnedMods = new string[] { "BepInExPack_NASB", "Voice_Mod", "NASB_Custom_Music_Mod" };
+                string[] pinnedVoicepacks = new string[] { "Complete_Basic_Voice_Pack" };
+
+                for (int i = 0; i < ModsList.Length; i++)
                 {
+                    var addedYet = false;
                     var mod = ModsList[i];
                     if (mod.categories.Contains("Voicepacks"))
                     {
-                        if(mod.name == "Complete_Basic_Voice_Pack") pinnedVoice.Add(mod); // please don't ship this lol
-                        else voiceList.Add(mod);
+                        for (int j = 0; j < pinnedVoicepacks.Length; j++)
+                        {
+                            if (mod.name == pinnedVoicepacks[j] && !addedYet)
+                            {
+                                pinnedVoice.Add(mod);
+                                addedYet = true;
+                            }
+                        }
+                        if (!addedYet) voiceList.Add(mod);
                     }
-                    else modsList.Add(mod);
+                    else
+                    {
+                        for (int j = 0; j < pinnedMods.Length; j++)
+                        {
+                            if(mod.name == pinnedMods[j] && !addedYet)
+                            {
+                                pinnedMod.Add(mod);
+                                addedYet = true;
+                            }
+                        }
+                        if (!addedYet) modsList.Add(mod);
+                    }
                 }
+                pinnedMod.AddRange(modsList);
+                pinnedMod.AddRange(pinnedVoice);
+                pinnedMod.AddRange(voiceList);
 
-                modsList.AddRange(pinnedVoice);
-                modsList.AddRange(voiceList);
-
-                ModsList = modsList.ToArray();
+                ModsList = pinnedMod.ToArray();
             }
             catch (Exception e)
             {
@@ -422,7 +445,7 @@ namespace ModAssistant.Pages
             RefreshModsList();
         }
 
-        private async Task InstallMod(Mod mod, string directory)
+        public async Task InstallMod(Mod mod, string directory)
         {
             //int filesCount = 0;
             string downloadLink = null;
@@ -497,11 +520,11 @@ namespace ModAssistant.Pages
 
                         // TODO make bepinex the default extraction place for songs and the like
                         // force specific rules into proper bepinex folders
-                        string[] BepInExSubDirectories = new string[] { "core", "patchers", "monomod", "plugins", "config" };
+                        string[] BepInExSubDirectories = new string[] { "core", "patchers", "monomod", "plugins", "config", "customsongs" };
 
                         foreach (string subdirectory in BepInExSubDirectories)
                         {
-                            if (fullPathName.StartsWith(subdirectory))
+                            if (fullPathName.ToLower().StartsWith(subdirectory))
                             {
                                 fileDirectory = Path.Combine("BepInEx", fileDirectory);
                             }
@@ -533,9 +556,16 @@ namespace ModAssistant.Pages
 
             if (App.CheckInstalledMods)
             {
-                mod.ListItem.IsInstalled = true;
-                mod.ListItem.InstalledVersion = mod.LatestVersion.version_number;
-                mod.ListItem.InstalledModInfo = mod;
+                try
+                {
+                    mod.ListItem.IsInstalled = true;
+                    mod.ListItem.InstalledVersion = mod.LatestVersion.version_number;
+                    mod.ListItem.InstalledModInfo = mod;
+                }
+                catch
+                {
+                    // for oneclick
+                }
             }
         }
 
@@ -576,7 +606,7 @@ namespace ModAssistant.Pages
             {
                 foreach (string dep in dependent.LatestVersion.dependencies)
                 {
-                    if (dep == mod.DependencyString)
+                    if (mod.MatchesDependencyString(dep))
                     {
                         //dep.Mod = mod;
                         mod.Dependents.Add(dependent);
@@ -593,7 +623,7 @@ namespace ModAssistant.Pages
                 {
                     foreach (Mod mod in ModsList)
                     {
-                        if (dependency == mod.DependencyString && mod.ListItem.IsEnabled)
+                        if (mod.MatchesDependencyString(dependency) && mod.ListItem.IsEnabled)
                         {
                             mod.ListItem.PreviousState = mod.ListItem.IsSelected;
                             mod.ListItem.IsSelected = true;
@@ -613,7 +643,7 @@ namespace ModAssistant.Pages
                 {
                     foreach (Mod mod in ModsList)
                     {
-                        if (dependency == mod.DependencyString && !mod.ListItem.IsEnabled)
+                        if (mod.MatchesDependencyString(dependency) && !mod.ListItem.IsEnabled)
                         {
                             /*mod.ListItem.PreviousState = mod.ListItem.IsSelected;
                             mod.ListItem.IsSelected = true;

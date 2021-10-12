@@ -76,11 +76,26 @@ namespace ModAssistant
             }
         }
 
-        public string DependencyString
+        /*public string DependencyString
         {
             get
             {
                 return $"{owner}-{name}-{LatestVersion.version_number}";
+            }
+        }*/
+
+        public bool MatchesDependencyString(string dependencyString)
+        {
+            try
+            {
+                var ownerAndName = dependencyString.Substring(0, dependencyString.LastIndexOf("-"));
+                var version = new Version(dependencyString.Substring(dependencyString.LastIndexOf("-") + 1));
+                if (new Version(LatestVersion.version_number) >= version && ownerAndName.Trim() == $"{owner}-{name}") return true;
+                else return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

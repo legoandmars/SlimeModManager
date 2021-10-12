@@ -105,6 +105,7 @@
     <sys:String x:Key="Options:ReinstallInstalledMods">Options:Reinstall Installed Mods</sys:String>
     <sys:String x:Key="Options:EnableOneClickInstalls">Options:EnableOneClickInstalls</sys:String>
     <sys:String x:Key="Options:BeatSaver">Options:BeatSaver</sys:String>
+    <sys:String x:Key="Options:Thunderstore">Options:Thunderstore</sys:String>
     <sys:String x:Key="Options:ModelSaber">Options:ModelSaber</sys:String>
     <sys:String x:Key="Options:Playlists">Options:Playlists</sys:String>
     <sys:String x:Key="Options:CloseWindow">Options:CloseWindow</sys:String>

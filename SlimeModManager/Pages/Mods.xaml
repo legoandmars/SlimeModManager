@@ -81,7 +81,7 @@
                             <GridViewColumn x:Name="ImageColumn" Header="">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding ModImage}" Width="32" Height="32" />
+                                        <Image Source="{Binding ModImage}" Width="32" Height="32" RenderOptions.BitmapScalingMode="HighQuality" />
                                         <!--<Image Source="{Binding Path=Validated, Converter={StaticResource imageConverter}}" /> -->
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>

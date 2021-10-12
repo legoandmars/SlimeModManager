@@ -25,6 +25,7 @@ namespace ModAssistant.Pages
         public bool CheckInstalledMods { get; set; }
         public bool SelectInstalledMods { get; set; }
         public bool ReinstallInstalledMods { get; set; }
+        public bool ThunderstoreProtocolHandlerEnabled { get; set; }
         public bool ModelSaberProtocolHandlerEnabled { get; set; }
         public bool BeatSaverProtocolHandlerEnabled { get; set; }
         public bool PlaylistsProtocolHandlerEnabled { get; set; }
@@ -53,9 +54,10 @@ namespace ModAssistant.Pages
 
         public void UpdateHandlerStatus()
         {
-            ModelSaberProtocolHandlerEnabled = OneClickInstaller.IsRegistered("modelsaber");
+            /*ModelSaberProtocolHandlerEnabled = OneClickInstaller.IsRegistered("modelsaber");
             BeatSaverProtocolHandlerEnabled = OneClickInstaller.IsRegistered("beatsaver");
-            PlaylistsProtocolHandlerEnabled = OneClickInstaller.IsRegistered("bsplaylist");
+            PlaylistsProtocolHandlerEnabled = OneClickInstaller.IsRegistered("bsplaylist");*/
+            ThunderstoreProtocolHandlerEnabled = OneClickInstaller.IsRegistered("modelsaber");
         }
 
         private void SelectDirButton_Click(object sender, RoutedEventArgs e)
@@ -154,6 +156,17 @@ namespace ModAssistant.Pages
         {
             OneClickInstaller.Unregister("beatsaver");
         }
+
+        public void ThunderstoreProtocolHandler_Checked(object sender, RoutedEventArgs e)
+        {
+            OneClickInstaller.Register("ror2mm", Description: "URL:Thunderstore OneClick Install");
+        }
+
+        public void ThunderstoreProtocolHandler_Unchecked(object sender, RoutedEventArgs e)
+        {
+            OneClickInstaller.Unregister("ror2mm");
+        }
+
         public void PlaylistsProtocolHandler_Checked(object sender, RoutedEventArgs e)
         {
             OneClickInstaller.Register("bsplaylist", Description: "URL:BeatSaver Playlist OneClick Install");

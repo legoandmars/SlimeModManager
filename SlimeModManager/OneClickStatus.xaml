@@ -48,12 +48,12 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Image
+            <!-- <Image
                 Grid.Row="0"
                 Margin="60,0"
                 VerticalAlignment="Center"
                 Source="{DynamicResource loadingInnerDrawingImage}"
-                Stretch="Uniform" />
+                Stretch="Uniform" /> -->
             <Image
                 Grid.Row="0"
                 Margin="60,0"

@@ -145,6 +145,7 @@
     <sys:String x:Key="Options:ReinstallInstalledMods">Reinstall Installed Mods</sys:String>
     <sys:String x:Key="Options:EnableOneClickInstalls">Enable OneClick™ Installs</sys:String>
     <sys:String x:Key="Options:BeatSaver">BeatSaver</sys:String>
+    <sys:String x:Key="Options:Thunderstore">Thunderstore/ROR2MM</sys:String>
     <sys:String x:Key="Options:ModelSaber">ModelSaber</sys:String>
     <sys:String x:Key="Options:Playlists">Playlists</sys:String>
     <sys:String x:Key="Options:CloseWindow">Close window when finished</sys:String>
@@ -253,7 +254,7 @@
     <!-- Utils Class -->
     <sys:String x:Key="Utils:NotificationTitle">Slime Mod Manager</sys:String>
     <sys:String x:Key="Utils:NoInstallFolder">Could not detect your Nickelodeon All-Star Brawl install folder. Please select it manually.</sys:String>
-    <sys:String x:Key="Utils:RunAsAdmin">Slime Mod Manager needs to run this task as Admin. Please try again.</sys:String>
+    <sys:String x:Key="Utils:RunAsAdmin">Slime Mod Manager needs to run this task as Admin to enable OneClick™ Installs. Please try again.</sys:String>
     <sys:String x:Key="Utils:InstallDir:DialogTitle">Select your Nickelodeon All-Star Brawl install folder</sys:String>
     <sys:String x:Key="Utils:CannotOpenFolder">Can't open folder: {0}</sys:String>
 </ResourceDictionary>

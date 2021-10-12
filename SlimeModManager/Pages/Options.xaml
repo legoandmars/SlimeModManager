@@ -175,7 +175,7 @@
             IsChecked="{Binding ReinstallInstalledMods, Mode=TwoWay}"
             Unchecked="ReinstallInstalled_Unchecked" />
             -->
-            <!-- <Menu
+            <Menu
             Grid.Row="8"
             Grid.Column="0"
             Margin="5"
@@ -187,14 +187,14 @@
                 Padding="5,0">
                     <MenuItem
                     Padding="5,0"
-                    Header="{DynamicResource Options:BeatSaver}"
-                    Name="BeatSaverProtocolHandler"
+                    Header="{DynamicResource Options:Thunderstore}"
+                    Name="ThunderstoreProtocolHandler"
                     IsCheckable="True"
                     StaysOpenOnClick="True"
-                    Checked="BeatSaverProtocolHandler_Checked"
-                    IsChecked="{Binding BeatSaverProtocolHandlerEnabled}"
-                    Unchecked="BeatSaverProtocolHandler_Unchecked"/>
-                    <MenuItem
+                    Checked="ThunderstoreProtocolHandler_Checked"
+                    IsChecked="{Binding ThunderstoreProtocolHandlerEnabled}"
+                    Unchecked="ThunderstoreProtocolHandler_Unchecked"/>
+                    <!-- <MenuItem
                     Padding="5,0"
                     Header="{DynamicResource Options:ModelSaber}"
                     Name="ModelSaberProtocolHandler"
@@ -212,7 +212,7 @@
                     Checked="PlaylistsProtocolHandler_Checked"
                     IsChecked="{Binding PlaylistsProtocolHandlerEnabled}"
                     Unchecked="PlaylistsProtocolHandler_Unchecked" /> -->
-                    <!-- <MenuItem
+                    <MenuItem
                     Padding="5,0"
                     Header="{DynamicResource Options:CloseWindow}"
                     Name="CloseWindowToggle"
@@ -221,9 +221,8 @@
                     Checked="CloseWindowOnFinish_Checked"
                     IsChecked="{Binding CloseWindowOnFinish}"
                     Unchecked="CloseWindowOnFinish_Unchecked" />
-                -->
-            <!-- </MenuItem>
-            </Menu> -->
+            </MenuItem>
+            </Menu>
             <!--
             <StackPanel
             Grid.Row="9"
