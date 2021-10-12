@@ -77,6 +77,16 @@
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
+                            
+                            <GridViewColumn x:Name="ImageColumn" Header="">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding ModImage}" Width="32" Height="32" />
+                                        <!--<Image Source="{Binding Path=Validated, Converter={StaticResource imageConverter}}" /> -->
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+
                             <GridViewColumn DisplayMemberBinding="{Binding ModName}" Header="{DynamicResource Mods:Header:Name}" />
 
                             <GridViewColumn x:Name="InstalledColumn" Header="{DynamicResource Mods:Header:Installed}">
@@ -93,6 +103,7 @@
                             <GridViewColumn DisplayMemberBinding="{Binding ModAuthor}" Header="{DynamicResource Mods:Header:Author}" />
                             
                             <GridViewColumn DisplayMemberBinding="{Binding ModVersion}" Header="{DynamicResource Mods:Header:Latest}" />
+
                             <GridViewColumn x:Name="DescriptionColumn" Header="{DynamicResource Mods:Header:Description}">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
@@ -123,7 +134,7 @@
 
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-
+                            
                             <GridViewColumn
                                 x:Name="UninstallColumn"
                                 Width="70"

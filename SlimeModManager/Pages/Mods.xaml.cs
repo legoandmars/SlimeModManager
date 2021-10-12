@@ -25,7 +25,7 @@ namespace ModAssistant.Pages
         public static Mods Instance = new Mods();
 
         //public List<string> DefaultMods = new List<string>() { "SongCore", "ScoreSaber", "BeatSaverDownloader", "BeatSaverVoting", "PlaylistManager", "ModelDownloader" };
-        public List<string> DefaultMods = new List<string>() { "BepInEx" };
+        public List<string> DefaultMods = new List<string>() { "BepInExPack_NASB" };
         public Mod[] ModsList;
         public Mod[] AllModsList;
         public static List<Mod> InstalledMods = new List<Mod>();
@@ -273,7 +273,7 @@ namespace ModAssistant.Pages
                 var body = await resp.Content.ReadAsStringAsync();
                 ModsList = JsonSerializer.Deserialize<Mod[]>(body);
 
-                Console.WriteLine(ModsList[0]);
+                Array.Reverse(ModsList);
             }
             catch (Exception e)
             {
@@ -285,7 +285,8 @@ namespace ModAssistant.Pages
             {
                 //bool preSelected = mod.required;
                 bool preSelected = false;
-                if (DefaultMods.Contains(mod.name) || (App.SaveModSelection && App.SavedMods.Contains(mod.name)))
+                bool required = false;
+                if ((App.SaveModSelection && App.SavedMods.Contains(mod.name)))
                 {
                     preSelected = true;
                     if (!App.SavedMods.Contains(mod.name))
@@ -294,17 +295,23 @@ namespace ModAssistant.Pages
                     }
                 }
 
+                if (DefaultMods.Contains(mod.name)) {
+                    preSelected = true;
+                    required = true;
+                }
+
                 RegisterDependencies(mod);
 
                 ModListItem ListItem = new ModListItem()
                 {
                     IsSelected = preSelected,
-                    IsEnabled = !preSelected,
+                    IsEnabled = !required,
                     ModName = mod.name,
                     ModAuthor = mod.owner,
                     ModVersion = mod.LatestVersion.version_number,
                     ModDescription = mod.LatestVersion.description,
                     ModInfo = mod,
+                    ModImage = mod.LatestVersion.icon,
                     Category = mod.categories[0] // what the hell
                 };
 
@@ -591,7 +598,7 @@ namespace ModAssistant.Pages
                                 }
                             }
                             //if (!needed && !mod.required)
-                            if (!needed)
+                            if (!needed && !DefaultMods.Contains(mod.name))
                             {
                                 mod.ListItem.IsSelected = mod.ListItem.PreviousState;
                                 mod.ListItem.IsEnabled = true;
@@ -636,6 +643,7 @@ namespace ModAssistant.Pages
         public class ModListItem
         {
             public string ModName { get; set; }
+            public string ModImage { get; set; } = "https://i.imgur.com/wkSCAKG.png";
             public string ModAuthor { get; set; }
             public string ModVersion { get; set; }
             public string ModDescription { get; set; }
