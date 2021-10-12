@@ -283,7 +283,7 @@ namespace ModAssistant.Pages
                 var pinnedMod = new List<Mod>();
                 var pinnedVoice = new List<Mod>();
 
-                string[] pinnedMods = new string[] { "BepInExPack_NASB", "Voice_Mod", "NASB_Custom_Music_Mod" };
+                string[] pinnedMods = new string[] { "BepInExPack_NASB", "Voice_Mod", "CustomMusicMod" };
                 string[] pinnedVoicepacks = new string[] { "Complete_Basic_Voice_Pack" };
 
                 for (int i = 0; i < ModsList.Length; i++)
@@ -348,6 +348,11 @@ namespace ModAssistant.Pages
 
                 RegisterDependencies(mod);
 
+                bool isMod = false;
+                for(int i = 0; i < mod.categories.Length; i++)
+                {
+                    if (mod.categories[i] == "Mods") isMod = true;
+                }
                 ModListItem ListItem = new ModListItem()
                 {
                     IsSelected = preSelected,
@@ -358,7 +363,7 @@ namespace ModAssistant.Pages
                     ModDescription = mod.LatestVersion.description,
                     ModInfo = mod,
                     ModImage = mod.LatestVersion.icon,
-                    Category = mod.categories[0] // what the hell
+                    Category = isMod ? "Mods" : mod.categories[0] // what the hell
                 };
 
                 foreach (Promotion promo in Promotions.List)
@@ -446,6 +451,8 @@ namespace ModAssistant.Pages
             RefreshModsList();
         }
 
+        string[] BepInExSubDirectories = new string[] { "core", "patchers", "monomod", "plugins", "config", "customsongs" };
+
         public async Task InstallMod(Mod mod, string directory)
         {
             //int filesCount = 0;
@@ -489,7 +496,6 @@ namespace ModAssistant.Pages
                         {
                             Directory.CreateDirectory(fileDirectory);
                         }*/
-
                         if (!string.IsNullOrEmpty(file.Name))
                         {
                             using (Stream fileStream = file.Open())
@@ -500,6 +506,23 @@ namespace ModAssistant.Pages
                                    /* break;
                                 }*/
                             }
+                        }else if (!string.IsNullOrEmpty(file.FullName))
+                        {
+                            var fileDirectory = file.FullName;
+                            var fullPathName = Path.GetDirectoryName(file.FullName);
+
+                            foreach (string subdirectory in BepInExSubDirectories)
+                            {
+                                if (fullPathName.ToLower().StartsWith(subdirectory))
+                                {
+                                    fileDirectory = Path.Combine("BepInEx", fileDirectory);
+                                }
+                            }
+
+                            string fileInstallPath = Path.Combine(directory, fileDirectory);
+
+                            if (!Directory.Exists(fileInstallPath)) Directory.CreateDirectory(fileInstallPath);
+                            // Directory.CreateDirectory(file.FullName);
                         }
                     }
 
