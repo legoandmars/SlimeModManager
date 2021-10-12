@@ -431,11 +431,11 @@ namespace ModAssistant.Pages
                 {
                     foreach (ZipArchiveEntry file in archive.Entries)
                     {
-                        string fileDirectory = Path.GetDirectoryName(Path.Combine(directory, file.FullName));
+                        /*string fileDirectory = Path.GetDirectoryName(Path.Combine(directory, file.FullName));
                         if (!Directory.Exists(fileDirectory))
                         {
                             Directory.CreateDirectory(fileDirectory);
-                        }
+                        }*/
 
                         if (!string.IsNullOrEmpty(file.Name))
                         {
@@ -456,23 +456,34 @@ namespace ModAssistant.Pages
                         {
                         var defaultPath = Path.Combine("BepInEx", "plugins", $"{mod.owner}-{mod.name}");
                         var fileDirectory = file.FullName;
+                        var fullPathName = Path.GetDirectoryName(file.FullName);
 
                         if (file.Name.ToLower() == "readme.md" || file.Name.ToLower() == "manifest.json" || file.Name.ToLower() == "icon.png") continue;
 
-                        // really should make this better but I have too much to do
+                        // really should make these rules better but I have too much to do
+                        // logic (hardcoded lol) for installing bepinex
                         if (fileDirectory.StartsWith(Utils.Constants.BepinExFolderName)) fileDirectory = fileDirectory.Substring(Utils.Constants.BepinExFolderName.Length);
 
-                        Console.WriteLine(file.FullName);
-                        Console.WriteLine(Path.GetDirectoryName(file.FullName));
+                        // force specific rules into proper bepinex folders
+                        string[] BepInExSubDirectories = new string[] { "core", "patchers", "monomod", "plugins", "config" };
 
-                        var fullPathName = Path.GetDirectoryName(file.FullName);
-                        if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                        foreach (string subdirectory in BepInExSubDirectories)
+                        {
+                            if (fullPathName.StartsWith(subdirectory))
+                            {
+                                fileDirectory = Path.Combine("BepInEx", fileDirectory);
+                            }
+                        }
 
-                        Console.WriteLine(directory);
-                        Console.WriteLine(fileDirectory);
-                        Console.WriteLine(Path.Combine(directory, fileDirectory));
+                        // logic for installing into plugins by default
+                        if(mod.owner != "BepInEx"){
+                            if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                            else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                        }
+
                         string fileInstallPath = Path.Combine(directory, fileDirectory);
-                            await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
+
+                        await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
                             if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
                         }
 
