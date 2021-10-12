@@ -127,8 +127,9 @@ namespace ModAssistant.Pages
                     DescriptionColumn.Width = 800;
                 }
                 */
-
+                
                 InstalledColumn.Width = 0;
+                UninstallColumn.Width = 70;
 
                 MainWindow.Instance.MainText = $"{FindResource("Mods:LoadingMods")}...";
                 await Task.Run(async () => await PopulateModsList());
