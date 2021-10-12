@@ -3,7 +3,7 @@
 
 Slime Mod Manager is a PC mod installer for Nickelodeon All-Star Brawl. It's based on [Mod Assistant](https://github.com/Assistant/ModAssistant), a similar installer for Beat Saber.
 
-## MOD DEVELOPERS: If you want your mod featured in Slime Mod Manager, please contact `Bobbie#0001` or `Steven 🎀#0001` on Discord!
+## MOD DEVELOPERS: If you want your mod/voicepack/music featured in Slime Mod Manager, upload it to the [NASB Thunderstore page](https://nasb.thunderstore.io/)
 
 * [Features](#Features)
 * [Usage](#Usage)
@@ -130,7 +130,7 @@ Examples:
   Make sure you're looking in the right place. Sometimes mod menus move as  modding libraries/practices change.
   
 **I don't see a certain mod in the mods list!**
-  Slime Mod Manager uses mods from an online file and shows whatever is available for download. 
+  Slime Mod Manager uses mods from Thunderstore and shows whatever is available for download. 
   
   
 ## Credits
