@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using ModAssistant.Pages;
+using System;
 
 namespace ModAssistant
 {
-    public class Mod
+    /*public class Mod
     {
         public string name;
         public string author;
@@ -16,7 +17,62 @@ namespace ModAssistant
         public List<string> downloadedFilePaths = new List<string>();
         public Mods.ModListItem ListItem;
         public List<Mod> Dependents = new List<Mod>();
+    }*/
+
+    public class ModVersion
+    {
+        public string name { get; set; }
+        public string full_name { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+        public string version_number { get; set; }
+        public string[] dependencies { get; set; }
+        public string download_url { get; set; }
+        public int downloads { get; set; }
+        public DateTime date_created { get; set; }
+        public string website_url { get; set; }
+        public bool is_active { get; set; }
+        public string uuid4 { get; set; }
+        public int file_size { get; set; }
     }
+
+    public class Mod
+    {
+        public string name { get; set; }
+        public string full_name { get; set; }
+        public string owner { get; set; }
+        public string package_url { get; set; }
+        public DateTime date_created { get; set; }
+        public DateTime date_updated { get; set; }
+        public string uuid4 { get; set; }
+        public int rating_score { get; set; }
+        public bool is_pinned { get; set; }
+        public bool is_deprecated { get; set; }
+        public bool has_nsfw_content { get; set; }
+        public string[] categories { get; set; }
+        public ModVersion[] versions { get; set; }
+        public Mods.ModListItem ListItem;
+        public List<string> downloadedFilePaths = new List<string>();
+        public List<Mod> Dependents = new List<Mod>();
+
+        public ModVersion LatestVersion
+        {
+            get
+            {
+                return versions[0];
+            }
+        }
+
+        public string DependencyString
+        {
+            get
+            {
+                return $"{owner}-{name}-{LatestVersion.version_number}";
+            }
+        }
+    }
+
+
     /*
     public class Mod
     {

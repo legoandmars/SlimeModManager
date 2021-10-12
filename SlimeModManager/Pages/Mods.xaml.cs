@@ -272,6 +272,8 @@ namespace ModAssistant.Pages
                 var resp = await HttpClient.GetAsync(Utils.Constants.NASBModInfo);
                 var body = await resp.Content.ReadAsStringAsync();
                 ModsList = JsonSerializer.Deserialize<Mod[]>(body);
+
+                Console.WriteLine(ModsList[0]);
             }
             catch (Exception e)
             {
@@ -299,11 +301,11 @@ namespace ModAssistant.Pages
                     IsSelected = preSelected,
                     IsEnabled = !preSelected,
                     ModName = mod.name,
-                    ModAuthor = mod.author,
-                    ModVersion = mod.version,
-                    ModDescription = mod.description,
+                    ModAuthor = mod.owner,
+                    ModVersion = mod.LatestVersion.version_number,
+                    ModDescription = mod.LatestVersion.description,
                     ModInfo = mod,
-                    Category = mod.group
+                    Category = mod.categories[0] // what the hell
                 };
 
                 foreach (Promotion promo in Promotions.List)
@@ -330,7 +332,7 @@ namespace ModAssistant.Pages
                     {
                         ListItem.InstalledModInfo = installedMod;
                         ListItem.IsInstalled = true;
-                        ListItem.InstalledVersion = installedMod.version;
+                        ListItem.InstalledVersion = installedMod.LatestVersion.version_number;
                         break;
                     }
                 }
@@ -412,7 +414,7 @@ namespace ModAssistant.Pages
                 }
             }*/
 
-            downloadLink = mod.download_url;
+            downloadLink = mod.LatestVersion.download_url;
 
             if (string.IsNullOrEmpty(downloadLink))
             {
@@ -452,7 +454,24 @@ namespace ModAssistant.Pages
                     //{
                         foreach (ZipArchiveEntry file in files)
                         {
-                            string fileInstallPath = Path.Combine(directory, file.FullName);
+                        var defaultPath = Path.Combine("BepInEx", "plugins", $"{mod.owner}-{mod.name}");
+                        var fileDirectory = file.FullName;
+
+                        if (file.Name.ToLower() == "readme.md" || file.Name.ToLower() == "manifest.json" || file.Name.ToLower() == "icon.png") continue;
+
+                        // really should make this better but I have too much to do
+                        if (fileDirectory.StartsWith(Utils.Constants.BepinExFolderName)) fileDirectory = fileDirectory.Substring(Utils.Constants.BepinExFolderName.Length);
+
+                        Console.WriteLine(file.FullName);
+                        Console.WriteLine(Path.GetDirectoryName(file.FullName));
+
+                        var fullPathName = Path.GetDirectoryName(file.FullName);
+                        if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
+
+                        Console.WriteLine(directory);
+                        Console.WriteLine(fileDirectory);
+                        Console.WriteLine(Path.Combine(directory, fileDirectory));
+                        string fileInstallPath = Path.Combine(directory, fileDirectory);
                             await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
                             if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
                         }
@@ -465,7 +484,7 @@ namespace ModAssistant.Pages
             if (App.CheckInstalledMods)
             {
                 mod.ListItem.IsInstalled = true;
-                mod.ListItem.InstalledVersion = mod.version;
+                mod.ListItem.InstalledVersion = mod.LatestVersion.version_number;
                 mod.ListItem.InstalledModInfo = mod;
             }
         }
@@ -476,6 +495,7 @@ namespace ModAssistant.Pages
             {
                 try
                 {
+                    if (!Directory.Exists(Path.GetDirectoryName(path))) Directory.CreateDirectory(Path.GetDirectoryName(path));
                     file.ExtractToFile(path, true);
                 }
                 catch
@@ -499,16 +519,16 @@ namespace ModAssistant.Pages
 
         private void RegisterDependencies(Mod dependent)
         {
-            if (dependent.dependencies == null || dependent.dependencies.Length == 0)
+            if (dependent.LatestVersion.dependencies == null || dependent.LatestVersion.dependencies.Length == 0)
                 return;
 
             foreach (Mod mod in ModsList)
             {
-                foreach (string dep in dependent.dependencies)
+                foreach (string dep in dependent.LatestVersion.dependencies)
                 {
-
-                    if (dep == mod.name)
+                    if (dep == mod.DependencyString)
                     {
+                        Console.WriteLine("Dependent");
                         //dep.Mod = mod;
                         mod.Dependents.Add(dependent);
                     }
@@ -518,13 +538,13 @@ namespace ModAssistant.Pages
 
         private void ResolveDependencies(Mod dependent)
         {
-            if (dependent.ListItem.IsSelected && dependent.dependencies != null && dependent.dependencies.Length > 0)
+            if (dependent.ListItem.IsSelected && dependent.LatestVersion.dependencies != null && dependent.LatestVersion.dependencies.Length > 0)
             {
-                foreach (string dependency in dependent.dependencies)
+                foreach (string dependency in dependent.LatestVersion.dependencies)
                 {
                     foreach (Mod mod in ModsList)
                     {
-                        if (dependency == mod.name && mod.ListItem.IsEnabled)
+                        if (dependency == mod.DependencyString && mod.ListItem.IsEnabled)
                         {
                             mod.ListItem.PreviousState = mod.ListItem.IsSelected;
                             mod.ListItem.IsSelected = true;
@@ -538,13 +558,13 @@ namespace ModAssistant.Pages
 
         private void UnresolveDependencies(Mod dependent)
         {
-            if (!dependent.ListItem.IsSelected && dependent.dependencies != null && dependent.dependencies.Length > 0)
+            if (!dependent.ListItem.IsSelected && dependent.LatestVersion.dependencies != null && dependent.LatestVersion.dependencies.Length > 0)
             {
-                foreach (string dependency in dependent.dependencies)
+                foreach (string dependency in dependent.LatestVersion.dependencies)
                 {
                     foreach (Mod mod in ModsList)
                     {
-                        if (dependency == mod.name && !mod.ListItem.IsEnabled)
+                        if (dependency == mod.DependencyString && !mod.ListItem.IsEnabled)
                         {
                             /*mod.ListItem.PreviousState = mod.ListItem.IsSelected;
                             mod.ListItem.IsSelected = true;

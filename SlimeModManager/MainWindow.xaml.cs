@@ -280,7 +280,7 @@ namespace ModAssistant
                 return;
             }
             Mods.ModListItem mod = ((Mods.ModListItem)Mods.Instance.ModsListView.SelectedItem);
-            string infoUrl = mod.ModInfo.git_path;
+            string infoUrl = mod.ModInfo.package_url;
             //string infoUrl = "";
             if (string.IsNullOrEmpty(infoUrl))
             {
@@ -288,7 +288,7 @@ namespace ModAssistant
             }
             else
             {
-                infoUrl = "https://github.com/" + infoUrl;
+                //infoUrl = "https://github.com/" + infoUrl;
                 System.Diagnostics.Process.Start(infoUrl);
             }
         }
