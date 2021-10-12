@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using ModAssistant.Pages;
 using System;
+using System.Linq;
+using System.Collections;
 
 namespace ModAssistant
 {
@@ -59,7 +61,18 @@ namespace ModAssistant
         {
             get
             {
-                return versions[0];
+                try
+                {
+                    var versionsList = versions.ToList();
+                    var maxVersion = versionsList.Max(e => new Version(e.version_number));
+                    var latestVersion = versionsList.First(e => new Version(e.version_number) == maxVersion);
+
+                    return latestVersion;
+                }
+                catch
+                {
+                    return versions[0];
+                }
             }
         }
 

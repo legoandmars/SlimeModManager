@@ -211,7 +211,7 @@ namespace ModAssistant
                  * Writing it as is instead of using XAMLWriter keeps the source as is with comments, spacing, and organization.
                  * Using XAMLWriter would compress it into an unorganized mess.
                  */
-                using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ModAssistant.Themes.{themeName}.xaml"))
+                using (Stream s = Assembly.GetExecutingAssembly().GetManifestResourceStream($"SlimeModManager.Themes.{themeName}.xaml"))
                 using (FileStream writer = new FileStream($@"{ThemeDirectory}\\{themeName}\\{themeName}.xaml", FileMode.Create))
                 {
                     byte[] buffer = new byte[s.Length];
@@ -270,7 +270,7 @@ namespace ModAssistant
                 bool isPng = info.Name.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
                 bool isSidePng = info.Name.EndsWith(".side.png", StringComparison.OrdinalIgnoreCase);
                 bool isXaml = info.Name.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase);
-
+                if (info.Length == 0) continue; // glitched themes
                 if (isPng && !isSidePng)
                 {
                     theme.Waifus.Background = new BitmapImage(new Uri(info.FullName));
@@ -286,6 +286,7 @@ namespace ModAssistant
                     try
                     {
                         Uri resourceSource = new Uri(info.FullName);
+
                         ResourceDictionary dictionary = new ResourceDictionary
                         {
                             Source = resourceSource
@@ -523,6 +524,7 @@ namespace ModAssistant
         /// <param name="DrawingGroupName">DrawingGroup name for the image.</param>
         private static void ChangeColor(ResourceDictionary icons, string ResourceColorName, string DrawingGroupName)
         {
+            if (loadedThemes[LoadedTheme].ThemeDictionary == null) LoadedTheme = "Dark"; // hardcode to fix errors
             Application.Current.Resources[ResourceColorName] = loadedThemes[LoadedTheme].ThemeDictionary[ResourceColorName];
             ((GeometryDrawing)((DrawingGroup)icons[DrawingGroupName]).Children[0]).Brush = (Brush)Application.Current.Resources[ResourceColorName];
         }

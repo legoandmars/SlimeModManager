@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -274,6 +275,27 @@ namespace ModAssistant.Pages
                 ModsList = JsonSerializer.Deserialize<Mod[]>(body);
 
                 Array.Reverse(ModsList);
+
+                // actual pinning system tbd lmao
+                var modsList = new List<Mod>();
+                var voiceList = new List<Mod>();
+                var pinnedVoice = new List<Mod>();
+
+                for(int i = 0; i < ModsList.Length; i++)
+                {
+                    var mod = ModsList[i];
+                    if (mod.categories.Contains("Voicepacks"))
+                    {
+                        if(mod.name == "Complete_Basic_Voice_Pack") pinnedVoice.Add(mod); // please don't ship this lol
+                        else voiceList.Add(mod);
+                    }
+                    else modsList.Add(mod);
+                }
+
+                modsList.AddRange(pinnedVoice);
+                modsList.AddRange(voiceList);
+
+                ModsList = modsList.ToArray();
             }
             catch (Exception e)
             {
@@ -306,7 +328,7 @@ namespace ModAssistant.Pages
                 {
                     IsSelected = preSelected,
                     IsEnabled = !required,
-                    ModName = mod.name,
+                    ModName = mod.name.Replace('_', ' '),
                     ModAuthor = mod.owner,
                     ModVersion = mod.LatestVersion.version_number,
                     ModDescription = mod.LatestVersion.description,
@@ -462,6 +484,8 @@ namespace ModAssistant.Pages
                         foreach (ZipArchiveEntry file in files)
                         {
                         var defaultPath = Path.Combine("BepInEx", "plugins", $"{mod.owner}-{mod.name}");
+                        var defaultVoicepackPath = Path.Combine("BepInEx", "Voicepacks", $"{mod.owner}-{mod.name}");
+
                         var fileDirectory = file.FullName;
                         var fullPathName = Path.GetDirectoryName(file.FullName);
 
@@ -471,6 +495,7 @@ namespace ModAssistant.Pages
                         // logic (hardcoded lol) for installing bepinex
                         if (fileDirectory.StartsWith(Utils.Constants.BepinExFolderName)) fileDirectory = fileDirectory.Substring(Utils.Constants.BepinExFolderName.Length);
 
+                        // TODO make bepinex the default extraction place for songs and the like
                         // force specific rules into proper bepinex folders
                         string[] BepInExSubDirectories = new string[] { "core", "patchers", "monomod", "plugins", "config" };
 
@@ -484,8 +509,15 @@ namespace ModAssistant.Pages
 
                         // logic for installing into plugins by default
                         if(mod.owner != "BepInEx"){
-                            if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
-                            else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                            if (Path.GetExtension(fileDirectory) == ".voicepack")
+                            {
+                                if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultVoicepackPath, fileDirectory);
+                                else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultVoicepackPath, fileDirectory);
+                            }
+                            else {
+                                if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                                else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultPath, fileDirectory);
+                            }
                         }
 
                         string fileInstallPath = Path.Combine(directory, fileDirectory);
