@@ -64,7 +64,7 @@ namespace ModAssistant
 
             foreach (Update.Asset asset in LatestUpdate.assets)
             {
-                if (asset.name == "ModAssistant.exe")
+                if (asset.name == "SlimeModManager.exe")
                 {
                     DownloadLink = asset.browser_download_url;
                 }
