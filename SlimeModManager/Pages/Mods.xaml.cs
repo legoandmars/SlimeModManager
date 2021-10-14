@@ -506,7 +506,7 @@ namespace ModAssistant.Pages
                                    /* break;
                                 }*/
                             }
-                        }else if (!string.IsNullOrEmpty(file.FullName))
+                        }else if (!string.IsNullOrEmpty(file.FullName) && mod.owner != "BepInEx")
                         {
                             var fileDirectory = file.FullName;
                             var fullPathName = Path.GetDirectoryName(file.FullName);
