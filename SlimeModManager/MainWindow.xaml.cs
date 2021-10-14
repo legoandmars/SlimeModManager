@@ -114,13 +114,9 @@ namespace ModAssistant
         {
             try
             {
-                var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsVersions);
-                var body = await resp.Content.ReadAsStringAsync();
-                List<string> versions = JsonSerializer.Deserialize<string[]>(body).ToList();
+                List<string> versions = new List<string>() { "1.0.0" };
 
-                resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAlias);
-                body = await resp.Content.ReadAsStringAsync();
-                Dictionary<string, string[]> aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(body);
+                Dictionary<string, string[]> aliases = new Dictionary<string, string[]>();
 
                 Dispatcher.Invoke(() =>
                 {
@@ -181,7 +177,8 @@ namespace ModAssistant
                 string line1 = (string)Application.Current.FindResource("MainWindow:GameUpdateDialog:Line1");
                 string line2 = (string)Application.Current.FindResource("MainWindow:GameUpdateDialog:Line2");
 
-                Utils.ShowMessageBoxAsync($"{line1}\n\n{line2}", title);
+                // oh boy I sure hope this won't bite me later
+                //Utils.ShowMessageBoxAsync($"{line1}\n\n{line2}", title);
                 return versions[0];
             }
 

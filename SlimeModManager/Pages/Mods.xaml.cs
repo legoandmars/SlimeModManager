@@ -169,9 +169,9 @@ namespace ModAssistant.Pages
 
         public async Task GetAllMods()
         {
-            var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAPIUrl + "mod");
+            /*var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAPIUrl + "mod");
             var body = await resp.Content.ReadAsStringAsync();
-            AllModsList = JsonSerializer.Deserialize<Mod[]>(body);
+            AllModsList = JsonSerializer.Deserialize<Mod[]>(body);*/
         }
 
         private void CheckInstallDir(string directory)
