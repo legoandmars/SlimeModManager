@@ -271,16 +271,18 @@ namespace ModAssistant.Pages
             try
             {
                 //var resp = await HttpClient.GetAsync(Utils.Constants.BeatModsAPIUrl + Utils.Constants.BeatModsModsOptions + "&gameVersion=" + MainWindow.GameVersion);
-                var resp = await HttpClient.GetAsync(Utils.Constants.NASBModInfo);
-                var body = await resp.Content.ReadAsStringAsync();
-                ModsList = JsonSerializer.Deserialize<Mod[]>(body);
-
+                try
+                {
+                    var resp = await HttpClient.GetAsync(Utils.Constants.NASBModInfo);
+                    var body = await resp.Content.ReadAsStringAsync();
+                    ModsList = JsonSerializer.Deserialize<Mod[]>(body);
                 Array.Reverse(ModsList);
 
                 // actual pinning system tbd lmao
                 var modsList = new List<Mod>();
                 var skinList = new List<Mod>();
                 var voiceList = new List<Mod>();
+                var otherList = new List<Mod>();
                 var pinnedMod = new List<Mod>();
                 var pinnedVoice = new List<Mod>();
 
@@ -292,6 +294,7 @@ namespace ModAssistant.Pages
                 {
                     var addedYet = false;
                     var mod = ModsList[i];
+
                     if (mod.categories.Contains("Voicepacks"))
                     {
                         for (int j = 0; j < pinnedVoicepacks.Length; j++)
@@ -307,6 +310,11 @@ namespace ModAssistant.Pages
                     else if (mod.categories.Contains("Skins"))
                     {
                         skinList.Add(mod);
+                    }
+                    else if(mod.categories == null || mod.categories.Length == 0) // used to break smm lol
+                    {
+                        mod.categories = new string[] { "Other" };
+                        otherList.Add(mod);
                     }
                     else
                     {
@@ -325,6 +333,7 @@ namespace ModAssistant.Pages
                 pinnedMod.AddRange(skinList);
                 pinnedMod.AddRange(pinnedVoice);
                 pinnedMod.AddRange(voiceList);
+                pinnedMod.AddRange(otherList);
 
                 ModsList = pinnedMod.ToArray();
             }
@@ -356,10 +365,11 @@ namespace ModAssistant.Pages
                 RegisterDependencies(mod);
 
                 bool isMod = false;
-                for(int i = 0; i < mod.categories.Length; i++)
+                for (int i = 0; i < mod.categories.Length; i++)
                 {
                     if (mod.categories[i] == "Mods") isMod = true;
                 }
+
                 ModListItem ListItem = new ModListItem()
                 {
                     IsSelected = preSelected,
@@ -411,6 +421,12 @@ namespace ModAssistant.Pages
             {
                 ResolveDependencies(mod);
             }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                }
+
         }
 
         public async void InstallMods()
