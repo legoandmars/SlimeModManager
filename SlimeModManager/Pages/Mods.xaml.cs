@@ -279,13 +279,15 @@ namespace ModAssistant.Pages
 
                 // actual pinning system tbd lmao
                 var modsList = new List<Mod>();
+                var skinList = new List<Mod>();
                 var voiceList = new List<Mod>();
                 var pinnedMod = new List<Mod>();
                 var pinnedVoice = new List<Mod>();
 
-                string[] pinnedMods = new string[] { "BepInExPack_NASB", "Voice_Mod", "CustomMusicMod" };
+                string[] pinnedMods = new string[] { "BepInExPack_NASB", "AltSkins", "Voice_Mod", "CustomMusicMod" };
                 string[] pinnedVoicepacks = new string[] { "Complete_Basic_Voice_Pack" };
 
+                // please fix this later oh my god
                 for (int i = 0; i < ModsList.Length; i++)
                 {
                     var addedYet = false;
@@ -302,6 +304,10 @@ namespace ModAssistant.Pages
                         }
                         if (!addedYet) voiceList.Add(mod);
                     }
+                    else if (mod.categories.Contains("Skins"))
+                    {
+                        skinList.Add(mod);
+                    }
                     else
                     {
                         for (int j = 0; j < pinnedMods.Length; j++)
@@ -316,6 +322,7 @@ namespace ModAssistant.Pages
                     }
                 }
                 pinnedMod.AddRange(modsList);
+                pinnedMod.AddRange(skinList);
                 pinnedMod.AddRange(pinnedVoice);
                 pinnedMod.AddRange(voiceList);
 
@@ -532,6 +539,7 @@ namespace ModAssistant.Pages
                         {
                         var defaultPath = Path.Combine("BepInEx", "plugins", $"{mod.owner}-{mod.name}");
                         var defaultVoicepackPath = Path.Combine("BepInEx", "Voicepacks", $"{mod.owner}-{mod.name}");
+                        var defaultSkinsPath = Path.Combine("BepInEx", "Skins", $"{mod.owner}-{mod.name}");
 
                         var fileDirectory = file.FullName;
                         var fullPathName = Path.GetDirectoryName(file.FullName);
@@ -561,7 +569,13 @@ namespace ModAssistant.Pages
                                 if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultVoicepackPath, fileDirectory);
                                 else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultVoicepackPath, fileDirectory);
                             }
-                            else {
+                            else if (Path.GetExtension(fileDirectory) == ".nasbskin")
+                            {
+                                if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultSkinsPath, fileDirectory);
+                                else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultSkinsPath, fileDirectory);
+                            }
+                            else
+                            {
                                 if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultPath, fileDirectory);
                                 else if (!fileDirectory.StartsWith("BepInEx")) fileDirectory = Path.Combine(defaultPath, fileDirectory);
                             }
