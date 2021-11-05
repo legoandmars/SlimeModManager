@@ -127,7 +127,7 @@ namespace ModAssistant.Pages
                     DescriptionColumn.Width = 800;
                 }
                 */
-                
+
                 InstalledColumn.Width = 0;
                 UninstallColumn.Width = 70;
 
@@ -276,156 +276,159 @@ namespace ModAssistant.Pages
                     var resp = await HttpClient.GetAsync(Utils.Constants.NASBModInfo);
                     var body = await resp.Content.ReadAsStringAsync();
                     ModsList = JsonSerializer.Deserialize<Mod[]>(body);
-                Array.Reverse(ModsList);
+                    Array.Reverse(ModsList);
 
-                // actual pinning system tbd lmao
-                var modsList = new List<Mod>();
-                var skinList = new List<Mod>();
-                var voiceList = new List<Mod>();
-                var otherList = new List<Mod>();
-                var pinnedMod = new List<Mod>();
-                var pinnedVoice = new List<Mod>();
+                    // actual pinning system tbd lmao
+                    var modsList = new List<Mod>();
+                    var skinList = new List<Mod>();
+                    var voiceList = new List<Mod>();
+                    var otherList = new List<Mod>();
+                    var pinnedMod = new List<Mod>();
+                    var pinnedVoice = new List<Mod>();
 
-                string[] pinnedMods = new string[] { "BepInExPack_NASB", "AltSkins", "Voice_Mod", "CustomMusicMod" };
-                string[] pinnedVoicepacks = new string[] { "Complete_Basic_Voice_Pack" };
+                    string[] pinnedMods = new string[] { "BepInExPack_NASB", "AltSkins", "Voice_Mod", "CustomMusicMod" };
+                    string[] pinnedVoicepacks = new string[] { "Complete_Basic_Voice_Pack" };
 
-                // please fix this later oh my god
-                for (int i = 0; i < ModsList.Length; i++)
-                {
-                    var addedYet = false;
-                    var mod = ModsList[i];
-
-                    if (mod.categories.Contains("Voicepacks"))
+                    // please fix this later oh my god
+                    for (int i = 0; i < ModsList.Length; i++)
                     {
-                        for (int j = 0; j < pinnedVoicepacks.Length; j++)
+                        var addedYet = false;
+                        var mod = ModsList[i];
+
+                        if (mod.is_deprecated) continue;
+
+                        if (mod.categories.Contains("Voicepacks"))
                         {
-                            if (mod.name == pinnedVoicepacks[j] && !addedYet)
+                            for (int j = 0; j < pinnedVoicepacks.Length; j++)
                             {
-                                pinnedVoice.Add(mod);
-                                addedYet = true;
+                                if (mod.name == pinnedVoicepacks[j] && !addedYet)
+                                {
+                                    pinnedVoice.Add(mod);
+                                    addedYet = true;
+                                }
+                            }
+                            if (!addedYet) voiceList.Add(mod);
+                        }
+                        else if (mod.categories.Contains("Skins"))
+                        {
+                            skinList.Add(mod);
+                        }
+                        else if (mod.categories == null || mod.categories.Length == 0) // used to break smm lol
+                        {
+                            mod.categories = new string[] { "Other" };
+                            otherList.Add(mod);
+                        }
+                        else
+                        {
+                            for (int j = 0; j < pinnedMods.Length; j++)
+                            {
+                                if (mod.name == pinnedMods[j] && !addedYet)
+                                {
+                                    pinnedMod.Add(mod);
+                                    addedYet = true;
+                                }
+                            }
+                            if (!addedYet) modsList.Add(mod);
+                        }
+                    }
+                    pinnedMod.AddRange(modsList);
+                    pinnedMod.AddRange(skinList);
+                    pinnedMod.AddRange(pinnedVoice);
+                    pinnedMod.AddRange(voiceList);
+                    pinnedMod.AddRange(otherList);
+
+                    ModsList = pinnedMod.ToArray();
+                }
+                catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show($"{FindResource("Mods:LoadFailed")}.\n\n" + e);
+                    return;
+                }
+
+                foreach (Mod mod in ModsList)
+                {
+                    //bool preSelected = mod.required;
+                    bool preSelected = false;
+                    bool required = false;
+                    if ((App.SaveModSelection && App.SavedMods.Contains(mod.name)))
+                    {
+                        preSelected = true;
+                        if (!App.SavedMods.Contains(mod.name))
+                        {
+                            App.SavedMods.Add(mod.name);
+                        }
+                    }
+
+                    if (DefaultMods.Contains(mod.name))
+                    {
+                        preSelected = true;
+                        required = true;
+                    }
+
+                    RegisterDependencies(mod);
+
+                    bool isMod = false;
+                    for (int i = 0; i < mod.categories.Length; i++)
+                    {
+                        if (mod.categories[i] == "Mods") isMod = true;
+                    }
+
+                    ModListItem ListItem = new ModListItem()
+                    {
+                        IsSelected = preSelected,
+                        IsEnabled = !required,
+                        ModName = mod.name.Replace('_', ' '),
+                        ModAuthor = mod.owner,
+                        ModVersion = mod.LatestVersion.version_number,
+                        ModDescription = mod.LatestVersion.description,
+                        ModInfo = mod,
+                        ModImage = mod.LatestVersion.icon,
+                        Category = isMod ? "Mods" : mod.categories[0] // what the hell
+                    };
+
+                    foreach (Promotion promo in Promotions.List)
+                    {
+                        if (promo.Active && mod.name == promo.ModName)
+                        {
+                            ListItem.PromotionTexts = new string[promo.Links.Count];
+                            ListItem.PromotionLinks = new string[promo.Links.Count];
+                            ListItem.PromotionTextAfterLinks = new string[promo.Links.Count];
+
+                            for (int i = 0; i < promo.Links.Count; ++i)
+                            {
+                                PromotionLink link = promo.Links[i];
+                                ListItem.PromotionTexts[i] = link.Text;
+                                ListItem.PromotionLinks[i] = link.Link;
+                                ListItem.PromotionTextAfterLinks[i] = link.TextAfterLink;
                             }
                         }
-                        if (!addedYet) voiceList.Add(mod);
                     }
-                    else if (mod.categories.Contains("Skins"))
+
+                    foreach (Mod installedMod in InstalledMods)
                     {
-                        skinList.Add(mod);
-                    }
-                    else if(mod.categories == null || mod.categories.Length == 0) // used to break smm lol
-                    {
-                        mod.categories = new string[] { "Other" };
-                        otherList.Add(mod);
-                    }
-                    else
-                    {
-                        for (int j = 0; j < pinnedMods.Length; j++)
+                        if (mod.name == installedMod.name)
                         {
-                            if(mod.name == pinnedMods[j] && !addedYet)
-                            {
-                                pinnedMod.Add(mod);
-                                addedYet = true;
-                            }
-                        }
-                        if (!addedYet) modsList.Add(mod);
-                    }
-                }
-                pinnedMod.AddRange(modsList);
-                pinnedMod.AddRange(skinList);
-                pinnedMod.AddRange(pinnedVoice);
-                pinnedMod.AddRange(voiceList);
-                pinnedMod.AddRange(otherList);
-
-                ModsList = pinnedMod.ToArray();
-            }
-            catch (Exception e)
-            {
-                System.Windows.MessageBox.Show($"{FindResource("Mods:LoadFailed")}.\n\n" + e);
-                return;
-            }
-
-            foreach (Mod mod in ModsList)
-            {
-                //bool preSelected = mod.required;
-                bool preSelected = false;
-                bool required = false;
-                if ((App.SaveModSelection && App.SavedMods.Contains(mod.name)))
-                {
-                    preSelected = true;
-                    if (!App.SavedMods.Contains(mod.name))
-                    {
-                        App.SavedMods.Add(mod.name);
-                    }
-                }
-
-                if (DefaultMods.Contains(mod.name)) {
-                    preSelected = true;
-                    required = true;
-                }
-
-                RegisterDependencies(mod);
-
-                bool isMod = false;
-                for (int i = 0; i < mod.categories.Length; i++)
-                {
-                    if (mod.categories[i] == "Mods") isMod = true;
-                }
-
-                ModListItem ListItem = new ModListItem()
-                {
-                    IsSelected = preSelected,
-                    IsEnabled = !required,
-                    ModName = mod.name.Replace('_', ' '),
-                    ModAuthor = mod.owner,
-                    ModVersion = mod.LatestVersion.version_number,
-                    ModDescription = mod.LatestVersion.description,
-                    ModInfo = mod,
-                    ModImage = mod.LatestVersion.icon,
-                    Category = isMod ? "Mods" : mod.categories[0] // what the hell
-                };
-
-                foreach (Promotion promo in Promotions.List)
-                {
-                    if (promo.Active && mod.name == promo.ModName)
-                    {
-                        ListItem.PromotionTexts = new string[promo.Links.Count];
-                        ListItem.PromotionLinks = new string[promo.Links.Count];
-                        ListItem.PromotionTextAfterLinks = new string[promo.Links.Count];
-
-                        for (int i = 0; i < promo.Links.Count; ++i)
-                        {
-                            PromotionLink link = promo.Links[i];
-                            ListItem.PromotionTexts[i] = link.Text;
-                            ListItem.PromotionLinks[i] = link.Link;
-                            ListItem.PromotionTextAfterLinks[i] = link.TextAfterLink;
+                            ListItem.InstalledModInfo = installedMod;
+                            ListItem.IsInstalled = true;
+                            ListItem.InstalledVersion = installedMod.LatestVersion.version_number;
+                            break;
                         }
                     }
+
+                    mod.ListItem = ListItem;
+
+                    ModList.Add(ListItem);
                 }
 
-                foreach (Mod installedMod in InstalledMods)
+                foreach (Mod mod in ModsList)
                 {
-                    if (mod.name == installedMod.name)
-                    {
-                        ListItem.InstalledModInfo = installedMod;
-                        ListItem.IsInstalled = true;
-                        ListItem.InstalledVersion = installedMod.LatestVersion.version_number;
-                        break;
-                    }
+                    ResolveDependencies(mod);
                 }
-
-                mod.ListItem = ListItem;
-
-                ModList.Add(ListItem);
-            }
-
-            foreach (Mod mod in ModsList)
-            {
-                ResolveDependencies(mod);
-            }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                }
+            }
 
         }
 
@@ -525,11 +528,12 @@ namespace ModAssistant.Pages
                             {
                                 /*if (fileHash.hash == Utils.CalculateMD5FromStream(fileStream))
                                 {*/
-                                    files.Add(file);
-                                   /* break;
-                                }*/
+                                files.Add(file);
+                                /* break;
+                             }*/
                             }
-                        }else if (!string.IsNullOrEmpty(file.FullName) && mod.owner != "BepInEx")
+                        }
+                        else if (!string.IsNullOrEmpty(file.FullName) && mod.owner != "BepInEx")
                         {
                             var fileDirectory = file.FullName;
                             var fullPathName = Path.GetDirectoryName(file.FullName);
@@ -551,8 +555,8 @@ namespace ModAssistant.Pages
 
                     //if (files.Count == filesCount)
                     //{
-                        foreach (ZipArchiveEntry file in files)
-                        {
+                    foreach (ZipArchiveEntry file in files)
+                    {
                         var defaultPath = Path.Combine("BepInEx", "plugins", $"{mod.owner}-{mod.name}");
                         var defaultVoicepackPath = Path.Combine("BepInEx", "Voicepacks", $"{mod.owner}-{mod.name}");
                         var defaultSkinsPath = Path.Combine("BepInEx", "Skins", $"{mod.owner}-{mod.name}");
@@ -579,7 +583,8 @@ namespace ModAssistant.Pages
                         }
 
                         // logic for installing into plugins by default
-                        if(mod.owner != "BepInEx"){
+                        if (mod.owner != "BepInEx")
+                        {
                             if (Path.GetExtension(fileDirectory) == ".voicepack")
                             {
                                 if (fullPathName == null || fullPathName == "") fileDirectory = Path.Combine(defaultVoicepackPath, fileDirectory);
@@ -600,10 +605,10 @@ namespace ModAssistant.Pages
                         string fileInstallPath = Path.Combine(directory, fileDirectory);
 
                         await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
-                            if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
-                        }
+                        if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
+                    }
 
-                        break;
+                    break;
                     //}
                 }
             }
@@ -918,9 +923,9 @@ namespace ModAssistant.Pages
 
         public void UninstallMod(Mod mod)
         {
-            if(mod.downloadedFilePaths != null && mod.downloadedFilePaths.Count > 0)
+            if (mod.downloadedFilePaths != null && mod.downloadedFilePaths.Count > 0)
             {
-                foreach(string filepath in mod.downloadedFilePaths)
+                foreach (string filepath in mod.downloadedFilePaths)
                 {
                     if (File.Exists(filepath)) File.Delete(filepath);
                 }
