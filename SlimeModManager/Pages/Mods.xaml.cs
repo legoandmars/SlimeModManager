@@ -295,6 +295,8 @@ namespace ModAssistant.Pages
                         var addedYet = false;
                         var mod = ModsList[i];
 
+                        if (mod.is_deprecated) continue;
+
                         if (mod.categories.Contains("Voicepacks"))
                         {
                             for (int j = 0; j < pinnedVoicepacks.Length; j++)
@@ -313,6 +315,7 @@ namespace ModAssistant.Pages
                         }
                         else if (mod.categories == null || mod.categories.Length == 0) // used to break smm lol
                         {
+
                             mod.categories = new string[] { "Other" };
                             otherList.Add(mod);
                         }
@@ -364,6 +367,7 @@ namespace ModAssistant.Pages
                     }
 
                     RegisterDependencies(mod);
+
 
                     bool isMod = false;
                     for (int i = 0; i < mod.categories.Length; i++)
