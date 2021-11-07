@@ -315,6 +315,7 @@ namespace ModAssistant.Pages
                         }
                         else if (mod.categories == null || mod.categories.Length == 0) // used to break smm lol
                         {
+
                             mod.categories = new string[] { "Other" };
                             otherList.Add(mod);
                         }
@@ -366,6 +367,7 @@ namespace ModAssistant.Pages
                     }
 
                     RegisterDependencies(mod);
+
 
                     bool isMod = false;
                     for (int i = 0; i < mod.categories.Length; i++)
@@ -466,6 +468,23 @@ namespace ModAssistant.Pages
                 }
                 else if (mod.ListItem.IsSelected)
                 {
+
+                    if (mod.categories.Contains("Mods"))
+                    {
+                        var directoryName = Path.Combine(installDirectory, "BepInEx", "plugins", $"{mod.owner}-{mod.name}");
+                        var manifestPath = Path.Combine(directoryName, "manifest.json");
+                        if (File.Exists(manifestPath))
+                        {
+                            dynamic manifest = JsonSerializer.Deserialize<dynamic>(File.ReadAllText(manifestPath));
+                            
+                            var modVersion = new Version(mod.LatestVersion.version_number);
+                            var curVersion = new Version(manifest["version_number"]);
+
+                            if (modVersion <= curVersion && Directory.GetFiles(directoryName).Any(x => x.ToLower().EndsWith(".dll"))) continue;
+                        }
+                    }
+
+
                     MainWindow.Instance.MainText = $"{string.Format((string)FindResource("Mods:InstallingMod"), mod.name)}...";
                     await Task.Run(async () => await InstallMod(mod, Path.Combine(installDirectory)));
                     MainWindow.Instance.MainText = $"{string.Format((string)FindResource("Mods:InstalledMod"), mod.name)}.";
@@ -564,7 +583,8 @@ namespace ModAssistant.Pages
                         var fileDirectory = file.FullName;
                         var fullPathName = Path.GetDirectoryName(file.FullName);
 
-                        if (file.Name.ToLower() == "readme.md" || file.Name.ToLower() == "manifest.json" || file.Name.ToLower() == "icon.png") continue;
+                        if (file.Name.ToLower() == "readme.md" || file.Name.ToLower() == "icon.png") continue;
+                        if (!mod.categories.Contains("Mods") && file.Name.ToLower() == "manifest.json") continue;
 
                         // really should make these rules better but I have too much to do
                         // logic (hardcoded lol) for installing bepinex
@@ -604,6 +624,8 @@ namespace ModAssistant.Pages
 
                         string fileInstallPath = Path.Combine(directory, fileDirectory);
 
+                        if (Path.GetExtension(fileInstallPath) == ".cfg" && File.Exists(fileInstallPath)) continue;
+
                         await ExtractFile(file, fileInstallPath, 3.0, mod.name, 10);
                         if (!mod.downloadedFilePaths.Contains(fileInstallPath)) mod.downloadedFilePaths.Add(fileInstallPath);
                     }
@@ -636,6 +658,10 @@ namespace ModAssistant.Pages
                 {
                     if (!Directory.Exists(Path.GetDirectoryName(path))) Directory.CreateDirectory(Path.GetDirectoryName(path));
                     file.ExtractToFile(path, true);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    MainWindow.Instance.MainText = $"Unauthorized Access! Skipping {file.Name}.";
                 }
                 catch
                 {
