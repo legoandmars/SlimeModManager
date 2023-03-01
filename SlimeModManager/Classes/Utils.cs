@@ -133,7 +133,7 @@ namespace ModAssistant
 
             if (!string.IsNullOrEmpty(InstallDir)
                 && Directory.Exists(InstallDir)
-                && Directory.Exists(Path.Combine(InstallDir, "Nickelodeon All-Star Brawl_Data", "Plugins"))
+                && Directory.Exists(Path.Combine(InstallDir, "Launcher Nickelodeon All-Star Brawl_Data", "Plugins"))
                 && File.Exists(Path.Combine(InstallDir, "Nickelodeon All-Star Brawl.exe")))
             {
                 return InstallDir;
@@ -242,7 +242,7 @@ namespace ModAssistant
 
         public static string GetVersion()
         {
-            string filename = Path.Combine(App.BeatSaberInstallDirectory, "Nickelodeon All-Star Brawl_Data", "globalgamemanagers");
+            string filename = Path.Combine(App.BeatSaberInstallDirectory, "Launcher Nickelodeon All-Star Brawl_Data", "globalgamemanagers");
             using (var stream = File.OpenRead(filename))
             using (var reader = new BinaryReader(stream, Encoding.UTF8))
             {
@@ -350,8 +350,8 @@ namespace ModAssistant
                 if (File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl.exe")))
                 {
                     string store;
-                    if (File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl_Data", "Plugins", "steam_api64.dll"))
-                       || File.Exists(Path.Combine(path, "Nickelodeon All-Star Brawl_Data", "Plugins", "x86_64", "steam_api64.dll")))
+                    if (File.Exists(Path.Combine(path, "Launcher Nickelodeon All-Star Brawl_Data", "Plugins", "steam_api64.dll"))
+                       || File.Exists(Path.Combine(path, "Launcher Nickelodeon All-Star Brawl_Data", "Plugins", "x86_64", "steam_api64.dll")))
                     {
                         store = "Steam";
                     }
@@ -384,7 +384,7 @@ namespace ModAssistant
         public static bool IsVoid()
         {
             string directory = App.BeatSaberInstallDirectory;
-            string pluginsDirectory = Path.Combine(directory, "Nickelodeon All-Star Brawl_Data", "Plugins");
+            string pluginsDirectory = Path.Combine(directory, "Launcher Nickelodeon All-Star Brawl_Data", "Plugins");
 
             if (File.Exists(Path.Combine(directory, "IGG-GAMES.COM.url")) ||
                 File.Exists(Path.Combine(directory, "SmartSteamEmu.ini")) ||
